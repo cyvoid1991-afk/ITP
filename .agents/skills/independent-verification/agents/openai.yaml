@@ -1,0 +1,7 @@
+interface:
+  display_name: "Independent Verification"
+  short_description: "Verify deliveries against approved product contracts"
+  default_prompt: "Use $independent-verification to verify this delivery against its approved contract."
+
+policy:
+  allow_implicit_invocation: true

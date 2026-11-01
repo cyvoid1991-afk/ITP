@@ -1,0 +1,102 @@
+# Authoritative observable-behavior and acceptance contract.
+schema_version: "1.0"
+artifact:
+  artifact_id: product-contract
+  version: 1
+  lifecycle_status: DRAFT # DRAFT | ACTIVE | SUPERSEDED
+  owner_role: product_contract_agent
+  created_at: null # ISO 8601 timestamp with timezone; null only in templates.
+  updated_at: null
+
+source_artifacts:
+  - artifact_id: build-request
+    version: 1
+    # New identity-bound runs: supply the exact active content_sha256.
+    # content_sha256: replace-with-active-request-sha256
+  # Prepared path only; remove this record entirely for direct B.
+  - artifact_id: problem-frame
+    version: 1
+    # content_sha256: replace-with-active-brief-sha256
+
+readiness:
+  status: BLOCKED # PASS | PASS_WITH_ASSUMPTIONS | BLOCKED
+  rationale: Replace with the contract-readiness reason.
+
+product:
+  name: Replace Me
+  objective: Replace with the approved observable outcome.
+  primary_user: Replace with the user or operator.
+  interface_summary: Replace with the externally visible interface.
+
+scope:
+  included: []
+  excluded: []
+
+# REVISION only: uncomment and populate this complete impact contract. Every
+# baseline/current REQ-* must be classified exactly once as unchanged or impacted.
+# revision_control:
+#   mode: DELTA
+#   baseline:
+#     run_id: completed-run-id
+#     archive_sha256: replace-with-lowercase-sha256
+#     product_contract_ref: product-contract@1
+#     product_contract_sha256: replace-with-lowercase-sha256
+#     verification_report_ref: verification-report@1
+#     verification_report_sha256: replace-with-lowercase-sha256
+#   unchanged_requirements:
+#     - requirement_ref: REQ-001
+#       baseline_bundle_sha256: replace-with-hash-of-full-requirement-and-linked-acceptance-records
+#   impact_map:
+#     - delta_item_ref: DELTA-001 # One entry for every DELTA-* and NONCHANGE-* item.
+#       disposition: IMPACTED # IMPACTED | UNCHANGED
+#       baseline_requirement_refs: [REQ-001]
+#       current_requirement_refs: [REQ-001]
+#       source_refs: []
+#       test_refs: []
+#       documentation_refs: []
+#       packaging_refs: []
+#       migration_impact: Replace with migration impact or "None."
+#       reverification_scope: ALL_APPLICABLE_REQUIREMENTS
+
+decisions: [] # DEC-* records; use the decision statuses defined in README.md.
+assumptions: [] # ASM-* records with impact, confirmation need, and issue status.
+blockers: [] # BLK-* records with blocking flag, affected stage, and resolution.
+
+verification_policy:
+  scope: ALL_APPLICABLE_REQUIREMENTS # Every requirement in the active list must be verified.
+  default_nature: DETERMINISTIC # Default case; do not add importance/criticality classification.
+  llm_judgment_requirements: [] # REQ-* IDs needing explicit semantic judgment in addition to evidence.
+
+requirements:
+  - id: REQ-001 # Stable and unique; never encode the category in this ID.
+    category: FUNCTIONAL # FUNCTIONAL | NON_FUNCTIONAL | DOCUMENTATION | COMPATIBILITY
+    title: Replace with a short requirement title.
+    statement: Replace with one atomic, testable externally observable requirement.
+    source_refs:
+      - problem-frame@1
+    acceptance_refs:
+      - ACC-001
+
+acceptance_methods:
+  - id: ACC-001
+    requirement_refs:
+      - REQ-001
+    evidence_method: TEST # TEST | INSPECTION | ANALYSIS | DEMONSTRATION
+    procedure: Replace with an objective procedure.
+    expected_result: Replace with the observable passing result.
+    evidence_required:
+      - Replace with a command result, file, runtime observation, or review record.
+    judgment_criteria: null # Required only when a linked REQ-* is listed under llm_judgment_requirements.
+
+implementation_constraints: [] # Include only approved behavior-, feasibility-, or acceptance-relevant constraints.
+documentation_obligations: []
+
+handoff:
+  next_stage: repository_analysis
+  required_artifacts:
+    - build-request@1
+    - problem-frame@1
+    - product-contract@1
+  carried_assumptions: [] # ASM-* IDs only.
+  open_blockers: [] # BLK-* IDs only; any open blocking item makes readiness BLOCKED.
+  rationale: Replace with why downstream implementation planning may or may not begin.

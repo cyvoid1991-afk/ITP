@@ -1,0 +1,272 @@
+schema_version: "1.0"
+artifact:
+  artifact_id: product-contract
+  version: 1
+  lifecycle_status: ACTIVE
+  owner_role: product_contract_agent
+  created_at: "2026-08-09T17:45:11+09:00"
+  updated_at: "2026-08-09T17:45:11+09:00"
+
+source_artifacts:
+  - artifact_id: build-request
+    version: 1
+  - artifact_id: problem-frame
+    version: 1
+
+readiness:
+  status: PASS
+  rationale: Observable behavior, failure handling, constraints, and acceptance evidence can be defined without a behavior-changing assumption.
+
+product:
+  name: Batch Filename Normalizer
+  objective: Safely preview and apply deterministic filename normalization for supported files in one local directory.
+  primary_user: Operations analyst
+  interface_summary: Python CLI invoked as python normalize_names.py <input_directory> with optional --apply.
+
+scope:
+  included:
+    - Direct regular CSV and JSON files in one directory.
+    - Preview, explicit apply, deterministic preflight, reporting, summaries, and exit semantics.
+    - Windows and Linux path compatibility.
+  excluded:
+    - Recursive traversal, directory renaming, content changes, GUI, watcher, undo, automatic conflict suffixes, and deployment.
+
+decisions:
+  - id: DEC-001
+    statement: Preview is the default and --apply is required for mutation.
+    rationale: The operator must review the proposed batch before execution.
+    owner: user
+    status: APPROVED
+    source_ref: build-request@1
+    impact: Defines the primary safety boundary.
+  - id: DEC-002
+    statement: Collisions and occupied targets are classified before mutation; only rename_report.csv may be replaced.
+    rationale: Outcomes must be independent of directory and rename order.
+    owner: user
+    status: APPROVED
+    source_ref: build-request@1
+    impact: Defines preflight and overwrite safety.
+  - id: DEC-003
+    statement: Per-file rename failure does not stop remaining operations and produces exit code 1.
+    rationale: Independent safe operations should continue after an isolated failure.
+    owner: user
+    status: APPROVED
+    source_ref: build-request@1
+    impact: Defines partial-success behavior.
+
+assumptions: []
+blockers: []
+
+verification_policy:
+  scope: ALL_APPLICABLE_REQUIREMENTS
+  default_nature: DETERMINISTIC
+  llm_judgment_requirements:
+    - REQ-002
+    - REQ-015
+
+requirements:
+  - id: REQ-001
+    category: FUNCTIONAL
+    title: CLI invocation and help
+    statement: The tool shall accept one input-directory positional argument, an optional --apply flag, and -h/--help; help shall exit without any filesystem operation.
+    source_refs: [problem-frame@1]
+    acceptance_refs: [ACC-001]
+  - id: REQ-002
+    category: FUNCTIONAL
+    title: Input path validation
+    statement: A missing path or a path that is not a directory shall produce a clear stderr error, perform no filesystem operation, and exit with code 2.
+    source_refs: [problem-frame@1]
+    acceptance_refs: [ACC-002]
+  - id: REQ-003
+    category: FUNCTIONAL
+    title: Candidate discovery
+    statement: The tool shall evaluate only directly contained regular files with .csv or .json extensions matched case-insensitively, excluding rename_report.csv, nested entries, directories, and unsupported files.
+    source_refs: [problem-frame@1]
+    acceptance_refs: [ACC-003]
+  - id: REQ-004
+    category: FUNCTIONAL
+    title: Deterministic name normalization
+    statement: The tool shall lowercase the extension and normalize the stem by trimming surrounding whitespace, lowercasing letters, replacing each run of spaces or hyphens with one underscore, removing non-ASCII-letter/digit/underscore characters, collapsing repeated underscores, and trimming surrounding underscores.
+    source_refs: [problem-frame@1]
+    acceptance_refs: [ACC-004]
+  - id: REQ-005
+    category: FUNCTIONAL
+    title: Policy classification
+    statement: The tool shall classify leading-dot files as hidden, empty normalized stems as invalid_name, unchanged valid names as already_normalized, and otherwise use only the approved mode-appropriate statuses would_rename, renamed, collision, target_exists, or failed.
+    source_refs: [problem-frame@1]
+    acceptance_refs: [ACC-005]
+  - id: REQ-006
+    category: FUNCTIONAL
+    title: Collision preflight
+    statement: Before the first rename, the tool shall classify every member of any multi-source normalized-target group as collision and shall not rename any member of that group.
+    source_refs: [problem-frame@1]
+    acceptance_refs: [ACC-006]
+  - id: REQ-007
+    category: FUNCTIONAL
+    title: Occupied target protection
+    statement: Before the first rename, the tool shall classify a normalized target occupied by a different existing file as target_exists and shall never overwrite that file.
+    source_refs: [problem-frame@1]
+    acceptance_refs: [ACC-007]
+  - id: REQ-008
+    category: FUNCTIONAL
+    title: Deterministic row order
+    statement: Terminal and report rows shall be sorted by original filename using case-insensitive comparison with the original filename as the tie-breaker.
+    source_refs: [problem-frame@1]
+    acceptance_refs: [ACC-008]
+  - id: REQ-009
+    category: FUNCTIONAL
+    title: Preview behavior
+    statement: Without --apply, the tool shall display current name, proposed name, and status for every eligible candidate, create no report, change no file, and count would_rename rows in the summary's renamed count.
+    source_refs: [problem-frame@1]
+    acceptance_refs: [ACC-009]
+  - id: REQ-010
+    category: FUNCTIONAL
+    title: Apply behavior
+    statement: With --apply, the tool shall attempt only candidates classified as safe to rename during preflight and shall preserve all preflight skip classifications.
+    source_refs: [problem-frame@1]
+    acceptance_refs: [ACC-010]
+  - id: REQ-011
+    category: FUNCTIONAL
+    title: Apply report
+    statement: After apply processing, the tool shall write or replace rename_report.csv with original_name, normalized_name, and status for every eligible candidate, including hidden and skipped candidates; normalized_name shall be empty only when no valid target exists.
+    source_refs: [problem-frame@1]
+    acceptance_refs: [ACC-011]
+  - id: REQ-012
+    category: FUNCTIONAL
+    title: Operational failure continuation
+    statement: A per-file rename failure shall be recorded as failed without stopping remaining safe renames; a report write failure shall be reported clearly and shall not roll back completed renames.
+    source_refs: [problem-frame@1]
+    acceptance_refs: [ACC-012]
+  - id: REQ-013
+    category: FUNCTIONAL
+    title: Summary and exit semantics
+    statement: The command shall print renamed, skipped, and failed counts; policy skips shall not be operational failures; successful preview/apply shall exit 0, any per-file or report failure shall exit 1, and invalid input path shall exit 2.
+    source_refs: [problem-frame@1]
+    acceptance_refs: [ACC-013]
+  - id: REQ-014
+    category: NON_FUNCTIONAL
+    title: Runtime and portability
+    statement: The implementation shall run on Python 3.11 or later using only the standard library and shall handle Windows and Linux paths.
+    source_refs: [problem-frame@1]
+    acceptance_refs: [ACC-014]
+  - id: REQ-015
+    category: DOCUMENTATION
+    title: Deliverable documentation
+    statement: The deliverable shall include the CLI script, automated tests, a README with invocation and behavior guidance, and a description of a small example directory.
+    source_refs: [problem-frame@1]
+    acceptance_refs: [ACC-015]
+
+acceptance_methods:
+  - id: ACC-001
+    requirement_refs: [REQ-001]
+    evidence_method: TEST
+    procedure: Run -h and --help against a monitored temporary directory and inspect exit behavior and filesystem state.
+    expected_result: Help is displayed, the command succeeds, and no file is created, modified, moved, or deleted.
+    evidence_required: [captured command output, exit code, before-and-after directory inventory]
+  - id: ACC-002
+    requirement_refs: [REQ-002]
+    evidence_method: TEST
+    procedure: Invoke the CLI with a nonexistent path and with a regular-file path.
+    expected_result: Each case prints a clear stderr error, exits 2, and causes no filesystem mutation.
+    evidence_required: [captured stderr, exit codes, before-and-after filesystem inventory]
+    judgment_criteria: The error identifies whether the path is missing or not a directory and gives the operator enough information to correct the invocation.
+  - id: ACC-003
+    requirement_refs: [REQ-003]
+    evidence_method: TEST
+    procedure: Use a fixture containing mixed-case CSV/JSON extensions, unsupported files, a nested directory, directories with supported-looking names, and rename_report.csv.
+    expected_result: Only supported direct regular candidates other than rename_report.csv appear in evaluated rows and counts.
+    evidence_required: [fixture inventory, preview output, parsed candidate list]
+  - id: ACC-004
+    requirement_refs: [REQ-004]
+    evidence_method: TEST
+    procedure: Parameterize stems covering whitespace, case, space/hyphen runs, punctuation, non-ASCII characters, repeated underscores, and empty normalized results.
+    expected_result: Every output exactly matches the approved ordered normalization rules and uses a lowercase extension.
+    evidence_required: [parameterized test results]
+  - id: ACC-005
+    requirement_refs: [REQ-005]
+    evidence_method: TEST
+    procedure: Exercise every approved status in its valid preview or apply context and inspect the complete set of emitted statuses.
+    expected_result: Each candidate receives the correct status and no unapproved status appears.
+    evidence_required: [terminal rows, report rows, status-set assertion]
+  - id: ACC-006
+    requirement_refs: [REQ-006]
+    evidence_method: TEST
+    procedure: Create two or more source names that normalize to one target and vary directory enumeration order.
+    expected_result: Every group member is collision, none is renamed, and results are enumeration-order independent.
+    evidence_required: [fixture inventory, repeated run outputs, post-run inventory]
+  - id: ACC-007
+    requirement_refs: [REQ-007]
+    evidence_method: TEST
+    procedure: Provide a candidate whose normalized target is occupied by a different existing file.
+    expected_result: The candidate is target_exists and the existing target content and metadata are not overwritten by the tool.
+    evidence_required: [pre/post target hash or content, result rows]
+  - id: ACC-008
+    requirement_refs: [REQ-008]
+    evidence_method: TEST
+    procedure: Use filenames whose case-insensitive sort keys tie and compare terminal and CSV order.
+    expected_result: Both outputs use the defined case-insensitive key and original-name tie-breaker.
+    evidence_required: [ordered terminal rows, ordered parsed CSV rows]
+  - id: ACC-009
+    requirement_refs: [REQ-009]
+    evidence_method: TEST
+    procedure: Run default preview against candidates covering rename and skip outcomes.
+    expected_result: The displayed columns and classifications are correct, renamed equals would_rename count, and no file or report changes.
+    evidence_required: [terminal output, exit code, before-and-after directory inventory]
+  - id: ACC-010
+    requirement_refs: [REQ-010]
+    evidence_method: TEST
+    procedure: Run --apply against a preflight fixture containing safe renames and all policy skips.
+    expected_result: Only preflight-approved candidates are renamed and every skip remains unchanged.
+    evidence_required: [preflight rows, apply rows, before-and-after inventory]
+  - id: ACC-011
+    requirement_refs: [REQ-011]
+    evidence_method: TEST
+    procedure: Run --apply with renamed, hidden, invalid, collision, target-exists, and already-normalized candidates, including an existing report.
+    expected_result: The report is replaced, contains exactly one correctly ordered row per eligible candidate, has the three required columns, and uses empty normalized_name only for invalid names.
+    evidence_required: [parsed report, fixture inventory, report replacement observation]
+  - id: ACC-012
+    requirement_refs: [REQ-012]
+    evidence_method: TEST
+    procedure: Inject one rename failure and separately inject report creation/replacement failure.
+    expected_result: Remaining safe renames continue after the rename failure; both scenarios exit 1; report failure does not roll back completed renames.
+    evidence_required: [injected-failure test output, exit codes, final inventory]
+  - id: ACC-013
+    requirement_refs: [REQ-013]
+    evidence_method: TEST
+    procedure: Exercise successful preview, successful apply, policy-only skips, per-file failure, report failure, and invalid input.
+    expected_result: Counts reconcile with evaluated candidates and exit codes are respectively 0, 0, 0, 1, 1, and 2.
+    evidence_required: [captured summaries, row counts, exit codes]
+  - id: ACC-014
+    requirement_refs: [REQ-014]
+    evidence_method: ANALYSIS
+    procedure: Inspect imports and run the test suite on supported Python 3.11+ Windows and Linux environments when available.
+    expected_result: No third-party runtime dependency exists and path-sensitive tests pass on both target platform families.
+    evidence_required: [import inspection, Python versions, platform test results or explicit UNVERIFIED entries]
+  - id: ACC-015
+    requirement_refs: [REQ-015]
+    evidence_method: INSPECTION
+    procedure: Inspect the release candidate contents and compare README instructions with actual CLI help and behavior.
+    expected_result: Script, tests, README, and example-directory description exist and documentation matches the interface.
+    evidence_required: [package or tree inventory, README-to-help comparison]
+    judgment_criteria: The README describes the observable interface, safety boundaries, failure behavior, and operator workflow without contradicting actual CLI behavior.
+
+implementation_constraints:
+  - Use Python 3.11 or later.
+  - Use only the Python standard library at runtime.
+  - Complete collision and target-exists classification before the first rename.
+  - Do not call an interactive GUI in the default CLI flow.
+
+documentation_obligations:
+  - Document preview as the default and --apply as the mutation gate.
+  - Document normalization, candidate selection, statuses, report fields, summaries, and exit codes.
+  - Document limitations and the absence of recursion and rollback.
+
+handoff:
+  next_stage: repository_analysis
+  required_artifacts:
+    - build-request@1
+    - problem-frame@1
+    - product-contract@1
+  carried_assumptions: []
+  open_blockers: []
+  rationale: The target repository can be inspected and implementation can be planned from these active artifacts without the source transcript.

@@ -1,0 +1,28 @@
+# Local environments, secrets and reproducible scratch work.
+.venv/
+.tmp/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.env
+.env.*
+!.env.example
+
+# Live local product inputs, run evidence and generated delivery output.
+/tools/intent-tool-pipeline/workspace/build_runs/*
+!/tools/intent-tool-pipeline/workspace/build_runs/README.md
+/tools/intent-tool-pipeline/workspace/framework_development/*
+!/tools/intent-tool-pipeline/workspace/framework_development/README.md
+/tools/intent-tool-pipeline/intent_deliver/*
+!/tools/intent-tool-pipeline/intent_deliver/README.md
+/tools/intent-tool-pipeline/demo_workspace/*
+!/tools/intent-tool-pipeline/demo_workspace/README.md
+/tools/intent-tool-pipeline/test_workspace/t/*
+!/tools/intent-tool-pipeline/test_workspace/t/.gitkeep
+/tools/intent-tool-pipeline/deliverables/*
+!/tools/intent-tool-pipeline/deliverables/README.md
+/tools/intent-tool-pipeline/dist/
+
+# Product source under codex_workspace/ remains trackable deliberately.

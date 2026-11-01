@@ -1,0 +1,902 @@
+{
+  "name": "intent-tool-pipeline",
+  "version": "0.3.0-rc.1",
+  "format": "repo-seed-1",
+  "files": [
+    {
+      "path": ".agents/delegation-policy.md",
+      "size": 3356,
+      "sha256": "73c1e52508b3b9b5f979a48dd460b9b9cc9195913bda48c8402d6db5a73d325c"
+    },
+    {
+      "path": ".agents/skills/apply-harness/README.md",
+      "size": 6848,
+      "sha256": "854db9eabdf8ec4257b7ed275174823825ed4444fa39429164d9a6319e4a1ceb"
+    },
+    {
+      "path": ".agents/skills/apply-harness/SKILL.md",
+      "size": 6278,
+      "sha256": "be7c8ce7986fc0cf455c04beb6ef6b3e57a90c61c5c62db22f4def388483bc50"
+    },
+    {
+      "path": ".agents/skills/apply-harness/agents/openai.yaml",
+      "size": 275,
+      "sha256": "12c2183199cf09f62401a858de36d1e15e52bc131c585df5e1eec49c87675698"
+    },
+    {
+      "path": ".agents/skills/apply-harness/harness-checklist.md",
+      "size": 5686,
+      "sha256": "0b4f02a1f8de5980af8d78e76d7ad858289214dea48ec2cdea62364e049f002b"
+    },
+    {
+      "path": ".agents/skills/apply-harness/references/workflow-record-example.md",
+      "size": 4920,
+      "sha256": "e99a962ac494ceb7fcb44779329abdfde97b82d18a7818a4eacbca4eadb2cbca"
+    },
+    {
+      "path": ".agents/skills/apply-harness/setup/AGENTS.full.md",
+      "size": 852,
+      "sha256": "56517f91c0870c56e075195d519d79ee8d774d7f785240731e5589fc3221eb5d"
+    },
+    {
+      "path": ".agents/skills/apply-harness/setup/skill-invocation.txt",
+      "size": 291,
+      "sha256": "a5c185f5ce16511a9b706bedaa0eef1b55ca81c1f88fed478a91e77fe18e3f42"
+    },
+    {
+      "path": ".agents/skills/apply-harness/work-guidance.md",
+      "size": 6913,
+      "sha256": "69cdf9521c57ade97856716179ee3a86d71d6fd3e8758fb061ec922e494c19c5"
+    },
+    {
+      "path": ".agents/skills/apply-harness/workflow-procedure.md",
+      "size": 8998,
+      "sha256": "1717840e32da58e4659b89ec587ce9c182906f0892bf7420549d284650b348f6"
+    },
+    {
+      "path": ".agents/skills/author-product-contract/SKILL.md",
+      "size": 13123,
+      "sha256": "ddffb3216497deb071ea6bf3847e4043594930ce35002231e7fa263e9b0ab2fc"
+    },
+    {
+      "path": ".agents/skills/author-product-contract/agents/openai.yaml",
+      "size": 310,
+      "sha256": "a1592f47f06759eca311891fc30a2d9734c19b741fcb1c7f33442a881c9fb902"
+    },
+    {
+      "path": ".agents/skills/build-tool-pipeline/SKILL.md",
+      "size": 45206,
+      "sha256": "f8718978a3399ffe7c1e60120acb3a541ae6b161b5b4413a536ef69c8b2b811f"
+    },
+    {
+      "path": ".agents/skills/build-tool-pipeline/agents/openai.yaml",
+      "size": 225,
+      "sha256": "0a4be5ef10f5b74abc1ec9c395fb06d1a3d5df63ac3f19aad937f46f08773756"
+    },
+    {
+      "path": ".agents/skills/build-tool-pipeline/references/assignment-entry.md",
+      "size": 2484,
+      "sha256": "f3739832c6e92473d6af277c96e32147038b6fbba45adfc5ae6b884838cf83e7"
+    },
+    {
+      "path": ".agents/skills/build-tool-pipeline/references/completion-report.md",
+      "size": 6924,
+      "sha256": "734a7966130416491a3c4dda4b2582d04a03f69813b7bc4ce9f285adf9e4b593"
+    },
+    {
+      "path": ".agents/skills/build-tool-pipeline/references/contract-adapter.md",
+      "size": 9756,
+      "sha256": "b5537d233acf00f787cbe18504d1bcdc1c4e1d4a3af0a544805b5a8439a03a17"
+    },
+    {
+      "path": ".agents/skills/build-tool-pipeline/references/framing-adapter.md",
+      "size": 6597,
+      "sha256": "d66e8e8a99e1d8b48720e2a57f04fd7b0dd957fe1e9c13166d24715178685821"
+    },
+    {
+      "path": ".agents/skills/build-tool-pipeline/references/gate-map.md",
+      "size": 40019,
+      "sha256": "b9dc14e15390bebc5fd878e5549ba367e1bb09bc4463b641b0820c7ab5f0b0a6"
+    },
+    {
+      "path": ".agents/skills/build-tool-pipeline/references/invocation.md",
+      "size": 9698,
+      "sha256": "8d4283a8bd82ffba28db883adca03f7ec43986f57ded5bb36f2cdf114b478988"
+    },
+    {
+      "path": ".agents/skills/build-tool-pipeline/references/verification-adapter.md",
+      "size": 7375,
+      "sha256": "0c554817e6f6bedf575a5c8201a64f2f97e75c13413d128638d4e17bc9f7bc46"
+    },
+    {
+      "path": ".agents/skills/build-tool-pipeline/scripts/initialize_run.py",
+      "size": 12957,
+      "sha256": "f846c31af25d8d4e7d0199d5ba3ef50c25c94964af2d590c7a87f25ff9ddf14a"
+    },
+    {
+      "path": ".agents/skills/independent-verification/SKILL.md",
+      "size": 12631,
+      "sha256": "eed04d31806410e885c37877f2f6aad8d114e2e5c3d4da9318a2e3f0d5c20f71"
+    },
+    {
+      "path": ".agents/skills/independent-verification/agents/openai.yaml",
+      "size": 278,
+      "sha256": "87b6933463b45ff1910e173294c710feb22169a91f0e7e2ba28b9d70671a4f04"
+    },
+    {
+      "path": ".agents/skills/intent-realization/SKILL.md",
+      "size": 18532,
+      "sha256": "4489ec690a9cefbf42739d833abd853b4fb293c91144aad3aaa81c5e3340defb"
+    },
+    {
+      "path": ".agents/skills/intent-tool-pipeline/SKILL.md",
+      "size": 4276,
+      "sha256": "9bd22c7343c5508ec37d28c032bca08edb7b084d5db5732a0d08ef5c7e46cf43"
+    },
+    {
+      "path": ".agents/skills/intent-tool-pipeline/agents/openai.yaml",
+      "size": 250,
+      "sha256": "1903b1b2ec59ae36d2a6e66e8877fed47bb734cfb317d2dfec4b61cbefc333c5"
+    },
+    {
+      "path": ".agents/skills/intent-tool-pipeline/references/optional-workflows.md",
+      "size": 1796,
+      "sha256": "4e0edaa79f8da5908ffd75227d17e88f66c6c9e9ab45fca9321b7bdc4bcfc7f0"
+    },
+    {
+      "path": ".agents/skills/minor-tool-revision/SKILL.md",
+      "size": 9822,
+      "sha256": "a8678a93af7e222a73dedffc8566cf5988c511b86c802224f608ceabb11716b4"
+    },
+    {
+      "path": ".agents/skills/minor-tool-revision/agents/openai.yaml",
+      "size": 294,
+      "sha256": "fcfb7acad5647e4e535f9890aedabe65fde61c76185e14fc75a919481b388e9a"
+    },
+    {
+      "path": ".agents/skills/minor-tool-revision/references/local-delivery.md",
+      "size": 12781,
+      "sha256": "44f54f06b1ae0f5344a83a58d29a7481f0bf9f73deba72609bc84ab2a9d6f7bd"
+    },
+    {
+      "path": ".agents/skills/problem-framing/SKILL.md",
+      "size": 10442,
+      "sha256": "072ac87a9620f30b528c045984b7b76dc9012503becbbba91ad8d1df024028ad"
+    },
+    {
+      "path": ".agents/skills/problem-framing/agents/openai.yaml",
+      "size": 222,
+      "sha256": "f34d9648cd9e9794b462dc1e123632bdbe340732df13273efcc803b3787dbb23"
+    },
+    {
+      "path": ".agents/skills/rework-product-docs/SKILL.md",
+      "size": 8765,
+      "sha256": "2a7610f900d9f9fa74719b940543a0a337fc50197ba3916906dcb333100212c3"
+    },
+    {
+      "path": ".agents/skills/rework-product-docs/agents/openai.yaml",
+      "size": 289,
+      "sha256": "7c378a9d60fc883c8b1fd51b15a152aef669c9135a5ad4a271c3b5ae3273e172"
+    },
+    {
+      "path": ".agents/skills/rework-product-docs/references/examples.md",
+      "size": 3649,
+      "sha256": "6609bf3fd000a4d92d9080806e81ff7ea202f669b21c7e76989dab178f1f6922"
+    },
+    {
+      "path": ".agents/skills/rework-product-docs/references/review.md",
+      "size": 8029,
+      "sha256": "fa9d1c174202114ebed6ff8276adb2cc5e8c2680292b46096e9af61bb5c2b645"
+    },
+    {
+      "path": ".agents/skills/rework-product-docs/references/usage-design.md",
+      "size": 7370,
+      "sha256": "5351819102268431ced3307095da8a9e8f88773665d41ff6863eacf8eccb0e89"
+    },
+    {
+      "path": ".codex/agents/README.md",
+      "size": 15732,
+      "sha256": "9c38a5daab14435f07908f389d772aaa20fad2066fdb57427376fafa4b29591e"
+    },
+    {
+      "path": ".codex/agents/collaborative_intent_shaping_agent.toml",
+      "size": 8171,
+      "sha256": "a59bee36f1e354d7efe0d67c9a561d659d634e284655a2dacfd230c537681539"
+    },
+    {
+      "path": ".codex/agents/independent_verifier.toml",
+      "size": 8555,
+      "sha256": "1516c5458da7cd2cbbc5b5525152d50a01e53c76b332fb3f132468e3a5ba3665"
+    },
+    {
+      "path": ".codex/agents/intent_realizer.toml",
+      "size": 6535,
+      "sha256": "98b276d2e5fb3230a473e168c50090f6699cb9eace06f1a37c7cf3f207b74ec6"
+    },
+    {
+      "path": ".codex/agents/product_contract_agent.toml",
+      "size": 8924,
+      "sha256": "4037884a30972af834735a497b41dd86e3308647bb5600fdde30927306c32924"
+    },
+    {
+      "path": ".codex/agents/product_intake_consultant.toml",
+      "size": 8205,
+      "sha256": "5c5678b059cba7521097824abcdcf79d3d5bd6eebdd8ca22a00d5cb0ffba4d1d"
+    },
+    {
+      "path": ".codex/agents/sources/intent-shaping-final.md",
+      "size": 5707,
+      "sha256": "e2ab2c301c7705060b9d0ced2e3c75467d1414c3cb9087e381d02bd397566434"
+    },
+    {
+      "path": ".codex/agents/theoretical_analysis_agent.toml",
+      "size": 8652,
+      "sha256": "37906961c2429f92d714d3e7d8f7fb68ea9a3c409b888acb41da1027214874ba"
+    },
+    {
+      "path": ".codex/config.toml",
+      "size": 304,
+      "sha256": "c9b5d1198a97adde681da4903477ae47e8051902fa40717c50d9d6257b266d5c"
+    },
+    {
+      "path": ".codex/retired/collaborative_intent_framing_agent.toml",
+      "size": 2719,
+      "sha256": "99296b96aa3f1672d4767e923c7f8f89f832475a78640f68507a40043b473a62"
+    },
+    {
+      "path": ".codex/retired/manifest.json",
+      "size": 749,
+      "sha256": "4f19bd345c8d1b566532c0520226320efd20ad59e5d1c306bc2f092a9aa3ec55"
+    },
+    {
+      "path": ".codex/retired/problem_framer.toml",
+      "size": 6197,
+      "sha256": "d5d4edc463ca1c61196cf82e37fd40d505ac0a5a7926b4cbf0d4928f6420109b"
+    },
+    {
+      "path": ".gitattributes",
+      "size": 86,
+      "sha256": "a6d6d541bc28ae7e7e890b63ea8f2e57914ff88b32c07fa226c4033626b516e6"
+    },
+    {
+      "path": ".gitignore",
+      "size": 977,
+      "sha256": "1736627618307b9b4b94e3fc764a8e28720cb1ff3b580698970e66cf3977986d"
+    },
+    {
+      "path": "AGENTS.md",
+      "size": 2875,
+      "sha256": "90b9d35383b030fb127532d1797665e2a16e1693e41a0dea764043ba6eecc00f"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "size": 1853,
+      "sha256": "c5f42da1715e2b9991a6caf4a387e3a5139b6cfa178f3390636aa28f9de64997"
+    },
+    {
+      "path": "DISTRIBUTION_NOTICE.md",
+      "size": 637,
+      "sha256": "fb7faacd6e5b796f0289d91cf15bcb39830e5a65006e14bf872b4cd165814682"
+    },
+    {
+      "path": "DOCUMENT_REFERENCES.json",
+      "size": 18956,
+      "sha256": "deb822e88cf77be766fcf138aceafc91300b67b8c27cb11b46052710f2b2a3ef"
+    },
+    {
+      "path": "PUBLIC_PROVENANCE.json",
+      "size": 98924,
+      "sha256": "741b775d84cdf7d17a13ffdf6d2cef52644740fcaeed410317e1ca1579b74724"
+    },
+    {
+      "path": "README.md",
+      "size": 7198,
+      "sha256": "1f897189bed0051a22ce7b6bf46fc10ea133974e888d5c6eb38d254a3c3325c4"
+    },
+    {
+      "path": "SOURCE_IDENTITY.md",
+      "size": 2356,
+      "sha256": "a88a36eb2354b923b2d67d2ebddf79b46c9c260bebaa46317835acb861ffbc07"
+    },
+    {
+      "path": "docs/engineering.md",
+      "size": 2249,
+      "sha256": "65ab8c4368735388342e9b709c56cd280e057f2ec31e75b83c62c00d9cf4275e"
+    },
+    {
+      "path": "pytest.ini",
+      "size": 126,
+      "sha256": "d7b5434ea31c46a7e32c90d3f130282657be89201d68c9d03f6eba6838705d16"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/.gitattributes",
+      "size": 86,
+      "sha256": "a6d6d541bc28ae7e7e890b63ea8f2e57914ff88b32c07fa226c4033626b516e6"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/.gitignore",
+      "size": 552,
+      "sha256": "10cbb32dc26c11d54d4a06019f5e63537b8a275674bd61aefe3677e4858067ba"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/AGENTS.md",
+      "size": 11681,
+      "sha256": "81f58895c3d5bb22eeab8b5879e61aa631a393e2c9ebca12fdf9716013e59bd9"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/BUILD_TOOL_PIPELINE_TRIGGER.md",
+      "size": 3276,
+      "sha256": "b2fb1e3b00a44ed846ba4cf7b34bbffdd655a5deb1c7a365f60083d3ec27f34a"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/CHANGELOG.md",
+      "size": 27969,
+      "sha256": "866aafde494a170a92e28a0f4cb7bd8518506066a803aa30eb0244e8d4b0837c"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/README.md",
+      "size": 4137,
+      "sha256": "ff82720f5e7cf869f3b6fef11dd7655ff80a4ad4ad37a5e5907ae5b2e3990dd0"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/SOURCE_MANIFEST.json",
+      "size": 18351,
+      "sha256": "cf09a249685e76e5ff468510dd44cbfec5a16c471145869cc473f3ad07b99d4d"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/VERSION",
+      "size": 11,
+      "sha256": "6abf907a048dbdba86651cff57613f0f0b9f8d725787e9c882b857112148ba9d"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/codex_workspace/README.md",
+      "size": 153,
+      "sha256": "8631ccf4fdcb4590dde6e7a591f3ddee271e5a3bc1dd20c8f2fd9e51a87ba7c0"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/deliverables/README.md",
+      "size": 170,
+      "sha256": "203947d3e5481c5a3d9ad6c5a6d78fea05e0b5a8c191742ff22547cfbe971596"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/demo_workspace/README.md",
+      "size": 105,
+      "sha256": "6293e33193d39b388dca18b78752ea44eb5fe62ccf8daad362016faa306d49b9"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/architecture.md",
+      "size": 14175,
+      "sha256": "87e4d8735f2de7869067aa813680a38a2371a6e78ac3dff279947b6fdb79e032"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/contracts/README.md",
+      "size": 32148,
+      "sha256": "76468416dfb3698317cb9325d250e71f8f73ee5e5f4684d7bd050caa8af35c4e"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/contracts/agent-artifact-protocol.md",
+      "size": 27626,
+      "sha256": "f901e0a74c03246a8f4ae3e4966bbfd146571fb03285f6f58686a743bde6d402"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/contracts/agent-rollout.md",
+      "size": 16230,
+      "sha256": "4d397d86bbc30fc352ff887a82ba159671ea31ceec0b41cff618540ec44f95b3"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/contracts/examples/filename_normalizer/build_request.yaml",
+      "size": 2942,
+      "sha256": "aec37216c3a2c9b7d018aebe3e71dde0fb4ac2e17f7d200b900eeca45972aa79"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/contracts/examples/filename_normalizer/problem_frame.md",
+      "size": 4784,
+      "sha256": "13b030a6812ef2c1acabda69cf6d33b5e578acc999f9461f9b0f05fe1bdbdbba"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/contracts/examples/filename_normalizer/product_contract.yaml",
+      "size": 14767,
+      "sha256": "25577ea03093113d12cacc94c033692c28047156921a0ed6f5938d3b74b68e1e"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/contracts/examples/filename_normalizer/run_state.json",
+      "size": 5083,
+      "sha256": "e0adf26063cee2f00e164ed5280689d6df8ae357d840bbbd784fcf7a65bd3c0f"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/contracts/examples/filename_normalizer/verification_report.md",
+      "size": 4696,
+      "sha256": "173f205771a5e4440817eab7b759010a35aa2a93d76ff04350e991da33199497"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/contracts/procedure-binding.md",
+      "size": 5499,
+      "sha256": "e2c0ddffa059ff2933ef8fd53024a916e12c3684b06e91c3241e2ac57384d4a9"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/contracts/round-recovery-clarification.md",
+      "size": 3433,
+      "sha256": "1b23dc3ddafa697a36881730a9bd2c69abaeddd68ae783393b6ff578f2dee15e"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/contracts/templates/build_request.yaml",
+      "size": 3973,
+      "sha256": "0f939874417dff40c9a79c18f14be829afb5189e320c9e40aa3fe209e1e3581b"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/contracts/templates/problem_frame.md",
+      "size": 2767,
+      "sha256": "bd7b6748e0910e13b5976332aacdea098aec85f521277a9c499ad74c63394048"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/contracts/templates/product_contract.yaml",
+      "size": 4144,
+      "sha256": "e6cfc10af78b9a4bb73e2f961c8245cd041bf20bed23be6ab4559548ebf741c8"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/contracts/templates/run_state.json",
+      "size": 1803,
+      "sha256": "e6727262b30fe109fb953799d6b5cfa9ec37d5557a2a2e49d7c7faa4e4f84a4d"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/contracts/templates/verification_report.md",
+      "size": 2544,
+      "sha256": "4752195044af41cdffaee0485e0bf09692fa80b32ace5f789d43d616dea746d3"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/current-framework.md",
+      "size": 1637,
+      "sha256": "b9e7c43ed97fb98635f4f4582cad1e29a0b41435c42bfb47bb8d9c7818f7b677"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/distribution.md",
+      "size": 3052,
+      "sha256": "9c5d3c7344fe94528ccba0d7951823116d5a27d988e3d68ce3367a0bde6da339"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/getting-started.md",
+      "size": 1945,
+      "sha256": "f04d8848b7f79a945aa1bd74caa4576b2b5db799513a08a3a09c617793c06565"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/governance/Root_Autonomy_Instruction_v0.3.md",
+      "size": 8291,
+      "sha256": "adcb24e02efb30d2c99ae9f43dbb7ccd8db0616ac271b4c16bde7fb2ba885cff"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/governance/Root_Delegation_and_Delta_Procedure_v0.3.md",
+      "size": 20892,
+      "sha256": "70b0823a582b981f09f433d5a669fffd1fa5eddc90aec8c03217cea5bc4041a1"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/governance/Task_Delegation_Contract_Template_v0.3.md",
+      "size": 5005,
+      "sha256": "2b43e2c8feed95e1832ecb30ff55bd083c0e8d54ce6d2179e5b891fd3e689da0"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/maintenance.md",
+      "size": 4742,
+      "sha256": "2c98d7da02f8bf17a747d8d38faad612fad5c474d2cfd6647b7a6671a3017584"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/migration.md",
+      "size": 2740,
+      "sha256": "f91a74d94230fba930259023156775187d67be44704574588aeb5bd7b0d7e8d3"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/provenance.md",
+      "size": 1709,
+      "sha256": "b1069b9dfc0260ed3ab180d0aea1c3896616e16ed035fc4a3857f623fd808320"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/source-import.json",
+      "size": 19812,
+      "sha256": "051a4f97f96507f1d999cf77782aaa07778cc5229e23ffae41bd073794135fc5"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/docs/workflows.md",
+      "size": 3798,
+      "sha256": "4f55af43d7890db3edb68bb74dfb402e391b5efa62e3f70b98b732c3e3566a12"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/intent_deliver/README.md",
+      "size": 963,
+      "sha256": "d7a6a95c4aed9cdf0416377665aae32749654309a09b1cea95114814246fd879"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/minor_delivery.py",
+      "size": 2286,
+      "sha256": "8d55161f5ce205f6e72d6fec2ed135a45a38495776d2187b90de2b1edd22e08d"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/packaging/itp/build.py",
+      "size": 11348,
+      "sha256": "39f773782997c5d464440a43ec936b7378f58467e257573f59789d582e0314db"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/packaging/itp/document-policy.json",
+      "size": 12976,
+      "sha256": "2c794d5a600974ad3ff1878d812bdb17e29f4719f1a2beff29ed37ab09233603"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/packaging/itp/include-list.json",
+      "size": 10460,
+      "sha256": "bc1618d8abc714f0aec8b4ed8ef6c55b1d5cc0c91ec7e84ed975df2018355662"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/packaging/public/README.md",
+      "size": 2854,
+      "sha256": "7c49c058a2f8913ea8f2d29bf8002ce43517e691f30f8038afcd0dcbfcc02f23"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/packaging/public/build.py",
+      "size": 9275,
+      "sha256": "7ab19382885655ab2cd0b8dd2fa9b226ba674e68e1c45d05c617aaffc18504b0"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/packaging/public/document-policy.json",
+      "size": 12976,
+      "sha256": "2c794d5a600974ad3ff1878d812bdb17e29f4719f1a2beff29ed37ab09233603"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/packaging/public/include-list.json",
+      "size": 10637,
+      "sha256": "e3ae67a52d98c565c8847a748662b2b9c19ba6b1d8d53e5b3b6a39869e32f7b8"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/packaging/public/overlays.json",
+      "size": 1033,
+      "sha256": "c4199bd53019207ff02800548cfd0661e62422d3ad202453e37d17833e749594"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/packaging/public/overlays/agents.txt",
+      "size": 2875,
+      "sha256": "90b9d35383b030fb127532d1797665e2a16e1693e41a0dea764043ba6eecc00f"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/packaging/public/overlays/changelog.txt",
+      "size": 1853,
+      "sha256": "c5f42da1715e2b9991a6caf4a387e3a5139b6cfa178f3390636aa28f9de64997"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/packaging/public/overlays/distribution.txt",
+      "size": 3052,
+      "sha256": "9c5d3c7344fe94528ccba0d7951823116d5a27d988e3d68ce3367a0bde6da339"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/packaging/public/overlays/getting-started.txt",
+      "size": 1945,
+      "sha256": "f04d8848b7f79a945aa1bd74caa4576b2b5db799513a08a3a09c617793c06565"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/packaging/public/overlays/gitattributes.txt",
+      "size": 86,
+      "sha256": "a6d6d541bc28ae7e7e890b63ea8f2e57914ff88b32c07fa226c4033626b516e6"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/packaging/public/overlays/gitignore.txt",
+      "size": 977,
+      "sha256": "1736627618307b9b4b94e3fc764a8e28720cb1ff3b580698970e66cf3977986d"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/packaging/public/overlays/readme.txt",
+      "size": 7198,
+      "sha256": "1f897189bed0051a22ce7b6bf46fc10ea133974e888d5c6eb38d254a3c3325c4"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/packaging/public/overlays/source-identity.txt",
+      "size": 2356,
+      "sha256": "a88a36eb2354b923b2d67d2ebddf79b46c9c260bebaa46317835acb861ffbc07"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/packaging/public/overlays/version.txt",
+      "size": 11,
+      "sha256": "6abf907a048dbdba86651cff57613f0f0b9f8d725787e9c882b857112148ba9d"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/README.md",
+      "size": 57761,
+      "sha256": "8c99b998701ddecec7318110773db7cd9355e9cfd5417115707aac50c31b6d10"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/__init__.py",
+      "size": 101,
+      "sha256": "2405f67be69449d3d269f7849e3e73af9ed33898726eae1444463e43d6f46ae8"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/artifacts.py",
+      "size": 56217,
+      "sha256": "172a9bebaaf574ceda915e41c97b7b5c2bba6c8364774dc776c771d6bfd6c415"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/boundary.py",
+      "size": 39090,
+      "sha256": "3c611077974c5cf2bb1fc30b3458a90029ce3c133f098e1196e0a74e3675bf5a"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/cli.py",
+      "size": 17389,
+      "sha256": "6ec2901ff92a1e0864e8833f51a5725e0904906a8f90a4b395c7f86f48a660bb"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/continuation.py",
+      "size": 28249,
+      "sha256": "0bca2fd05d97ae656d6b4f1c947793daa8a804813a75a6abb9605c285a30f20b"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/delivery_intake.py",
+      "size": 5395,
+      "sha256": "7ea0d461eb5a1c1eaa91979e5807a2d9e4ec447fac49e2551267b414149cf9ae"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/delivery_target.py",
+      "size": 6147,
+      "sha256": "06d5a3a20b912b8339945d0079f3e002e6c6e3b4476d24568e716e239e5b50fe"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/evidence.py",
+      "size": 7617,
+      "sha256": "1a64cf96ddf87bc7329a202169a70dc192c8d58ee13237e88415e54d52c734df"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/examples/package_spec.yaml",
+      "size": 1640,
+      "sha256": "328fbf9a79df93c7d63795e2d27502008b069b1836e6ec9fe2cd01d57ada5afe"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/examples/test_plan.yaml",
+      "size": 1195,
+      "sha256": "a1a23278241d61d936df189d158dd3a79380e368afe72208ae4c76dedf65678d"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/examples/verifier_plan.yaml",
+      "size": 2186,
+      "sha256": "4a297e4eebba04e2eebb863e6725dbd68afaaf557692a47163732a2e2538a4fe"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/finalize_journal.py",
+      "size": 4839,
+      "sha256": "5eb4df62afb93096f4af3e8963ebf3511473662b0193bbd474d326d83ccbae0c"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/io_utils.py",
+      "size": 5759,
+      "sha256": "75067ea6187ba032eae8c925c1ce327b3f6454c0b1ecaa3ab8357469f5c31bef"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/local_delivery.py",
+      "size": 13489,
+      "sha256": "a6dccc90c7838b772b392bef4b67503337b8a94d96730a3877b2b767a017df53"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/mutation_guard.py",
+      "size": 1727,
+      "sha256": "16e27ab1c523f9ba139481287813bcd05345f15b02e4d80f737b9e5588961736"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/packaging.py",
+      "size": 26003,
+      "sha256": "09f0526815e1d9b395f609b2305599c64f7cd4ef4b335a5851fc7e79d56be02c"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/procedures.py",
+      "size": 16922,
+      "sha256": "fd7b1a75bd4fe4069cab6f2dbb397ab7db95303729b2de7b8c83927cbcb1c3f5"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/result.py",
+      "size": 1313,
+      "sha256": "ffc5bd096a2e1684029c033086508bda404a1aff71378e75c8cb2f6aa003c9ac"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/revision.py",
+      "size": 24894,
+      "sha256": "14333d93a1d56996dcc0b6730e2853305d659611dfae53143f697dee26dd594b"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/rounds.py",
+      "size": 35014,
+      "sha256": "15167f422a22a5e998140eb7eb9024aa17c008069c52f1fe1539e7642a51b119"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/scratch.py",
+      "size": 4788,
+      "sha256": "e352bf0523a41c8a9eeb6f49cf177115681b66302fae224a1cbf17162f9c47b8"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/state.py",
+      "size": 42468,
+      "sha256": "e22192099262a153dedb6f07eecd59c61656c67aa6aa8237c24fbaa3fa79764e"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/submissions.py",
+      "size": 18191,
+      "sha256": "87a7a5585464b344615a6b82e8599c9c22af513cce54d86e9c30daefb3a289a6"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/test_runner.py",
+      "size": 12795,
+      "sha256": "55e4bf488d273e6c4af19a151439737afb212755b087e62a8da357cf9d372556"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/validation.py",
+      "size": 97967,
+      "sha256": "5bce3ffd81e33cd6c149c85059709c324664f8620db87b2c24b2c5a71dea217c"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/verifier_harness.py",
+      "size": 66958,
+      "sha256": "112cf0de4061f644b0405f745684e0193ae49d4c6ba22e63b5d7e343df55922d"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_control/workflow.py",
+      "size": 8346,
+      "sha256": "dbdad6974792b2e3f9990a13f3de2764e36d97ad1dd90b24ee701383d2eab2a3"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pipeline_ops.py",
+      "size": 172,
+      "sha256": "ea53617ac946207486ef0ddfb1a7be1e13735d6d681facc658c7d67c2041e1a8"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/pytest.ini",
+      "size": 42,
+      "sha256": "b160d82f7811555051f8966d8e02750a985227c1d022208c784e606946f2eada"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/requirements-dev.txt",
+      "size": 34,
+      "sha256": "0bf7813a142c756387ff51044446360e4bdfe0f7992189f8e268e1710efa45c3"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/requirements.txt",
+      "size": 14,
+      "sha256": "0969da99a0bc2a1b71ed50584560f4588a37567ac63af3ddbaf3c4617ca5621a"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/test_workspace/AGENTS.md",
+      "size": 738,
+      "sha256": "b08270e3383ff04184b1b0dca32958ba0b55181f6b241f70fbfe5b841551885a"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/test_workspace/README.md",
+      "size": 480,
+      "sha256": "61c91d3c489c66de60cb903b32cc90df3fc485aa0ff0d1873a8f4614e99fc179"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/test_workspace/t/.gitkeep",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_agent_continuation.py",
+      "size": 22347,
+      "sha256": "346bc0216ad134f216b3ccfffd5e8e068865171e6cd5617fb060e5acdcd81684"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_agent_control.py",
+      "size": 10107,
+      "sha256": "96691c472555abdafea3d9dc9a5d809170dae8272270d29b8ac4421adf1625ff"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_agent_delegation_policy.py",
+      "size": 11446,
+      "sha256": "b6a5d78ed17f002e956370fbefd43a6470354f1ad59206d409e8c1248fee46ed"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_agent_finalize.py",
+      "size": 31323,
+      "sha256": "4d826554af632c17781b7b442cdfcf0514fa3c04dfef87f27c2cff5ac221b3b8"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_agent_path_aliases.py",
+      "size": 3145,
+      "sha256": "639c57dc5dfaf2205fc6423c97ec0cdf0d1b54fa4ab0c044c2a385580c13a81c"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_agent_role_procedures.py",
+      "size": 11857,
+      "sha256": "95764d05b344afa135b2b8b6c975b8400ec127b789c8b44037609f9812b60c89"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_agent_rollout.py",
+      "size": 14121,
+      "sha256": "e44ae23626402d9a7c6bfeb87f748b7e43da5e4aca2adcc2d7a72231c24edc47"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_agent_rounds.py",
+      "size": 26126,
+      "sha256": "2ea2800c211cf22ec2c685d7dd58c737485fae06dbb4b6ffae3e8b4e79c984ee"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_agent_submissions.py",
+      "size": 22092,
+      "sha256": "488de50aa050df8e457124f0e950493aee2e21c6ec99af6253784bc36c991b27"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_boundary_optimization.py",
+      "size": 12793,
+      "sha256": "b6a45132a4fe2cf95280018e3409e8e7e79aa439f7da833e14bc1fe3e33c096e"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_build_tool_pipeline_skill.py",
+      "size": 16419,
+      "sha256": "b0bd08a4c401eb1e97959e600e2c8dd452e9310f6117e8a0b17377e7cd0de022"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_distribution.py",
+      "size": 18035,
+      "sha256": "cb143895fbfe6e09f5ab54f36a94eadcdd97c2f4e992441cd58e873b7bce5b23"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_local_delivery.py",
+      "size": 30258,
+      "sha256": "5722bc50406d3a2e7920980033462c90ee7661a0ede1a7365190783e1e40e49a"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_pipeline_control.py",
+      "size": 58902,
+      "sha256": "58519bd0e55bf059ebf8d58d004c703b2c853a62870ab98686854156e0f1758d"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_procedure_binding.py",
+      "size": 22546,
+      "sha256": "4970bb40055796f8c683e82489d5d115da167558f926b02d31c1df69ceca7fb1"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_procedure_integration.py",
+      "size": 1106,
+      "sha256": "906e622e5475647cd86681e3e2a398932f9a8d24b0dc1d6ba560e517a90b7125"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_public_seed.py",
+      "size": 5574,
+      "sha256": "7a04aedad76531d12a775da86538c58dbfd61ddaab5686591dd92f722cf29dab"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_repo_integration.py",
+      "size": 2601,
+      "sha256": "641859a3c32f3aa3ac005b5e976b8224b549e4cbda784d24aa40147592331eb0"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_revision_framing.py",
+      "size": 28106,
+      "sha256": "37affe1ab66527dc5bfe3ba46d53e74aba2761937b476fb2fa4123dc654d7fde"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_semantic_finalize.py",
+      "size": 40040,
+      "sha256": "f739d40c7d19654aa135efae24d5bca2fce91fe530d6fea3eb7dda1a7f5fc4df"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_two_workflows.py",
+      "size": 25321,
+      "sha256": "a8ccbedd8608085779f44d554f84f05de1a46e8905fd38e76538e1d00173ed6c"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/tests/test_verifier_harness.py",
+      "size": 40348,
+      "sha256": "6ed7f413fb92c1f6c31967b2240560284a7e5479dd0251582ba8a6168a6ddce4"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/verify_bundle.py",
+      "size": 2900,
+      "sha256": "4d0ee93873f0da218bca949760a679d074886c319f9782b6e7fa450ea54aeb6f"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/workspace/AGENTS.md",
+      "size": 1008,
+      "sha256": "ab2cd7aa68f3a46a0703899db5de3932309599576637900395060f01d15c1ddd"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/workspace/build_runs/README.md",
+      "size": 175,
+      "sha256": "31e6132295f30032adf605869d9dffd3cbb492bb0b28481f0d211359eb910726"
+    },
+    {
+      "path": "tools/intent-tool-pipeline/workspace/framework_development/README.md",
+      "size": 6991,
+      "sha256": "3fcc538421e0777bfce06a6911faabefb0eab1c12075e18e8303da3a2dbabf75"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+# Deterministic test execution plan. This file is an example, not auto-discovered configuration.
+schema_version: "1.0" # Supported major: 1.
+
+commands: # Executed in this order; all commands run even after a failure.
+  - id: pipeline-control-tests # Unique evidence ID for this plan.
+    # Active runtime argv; each token is separate because no shell is used.
+    argv:
+      - .\.venv\Scripts\python.exe
+      - -m
+      - pytest
+      - tests\test_pipeline_control.py
+      - -q
+      - --basetemp=workspace/artifacts/phase4_pytest_tmp
+    cwd: . # Active repository-relative working directory; default is '.'.
+    timeout_seconds: 300 # Active timeout; supported range is >0 through 3600.
+    expected_exit_codes: [0] # Active passing return-code set; default is [0].
+    # Repository-relative artifacts attributed to this command. Files retain SHA-256; directories retain a tree hash.
+    artifact_paths:
+      - pipeline_ops.py
+      - tests/test_pipeline_control.py
+
+  - id: pipeline-control-help
+    argv:
+      - .\.venv\Scripts\python.exe
+      - pipeline_ops.py
+      - --help
+    cwd: .
+    timeout_seconds: 30
+    expected_exit_codes: [0]
+    artifact_paths:
+      - pipeline_ops.py

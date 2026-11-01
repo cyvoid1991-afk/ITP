@@ -1,0 +1,4 @@
+interface:
+  display_name: "Intent-to-Tool Pipeline"
+  short_description: "Route local tool work to the right Codex workflow"
+  default_prompt: "Use $intent-tool-pipeline to choose and carry out the appropriate workflow for this local tool request."

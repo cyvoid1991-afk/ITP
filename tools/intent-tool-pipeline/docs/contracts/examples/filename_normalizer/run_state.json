@@ -1,0 +1,141 @@
+{
+  "schema_version": "1.0",
+  "artifact": {
+    "artifact_id": "run-state",
+    "version": 1,
+    "lifecycle_status": "ACTIVE",
+    "owner_role": "root_codex",
+    "created_at": "2026-08-09T17:45:11+09:00",
+    "updated_at": "2026-08-09T17:45:11+09:00"
+  },
+  "run": {
+    "run_id": "phase2-filename-normalizer-example",
+    "project_id": "filename-normalizer-example",
+    "current_stage": "repository_analysis",
+    "next_allowed_action": "Inspect the target repository using build-request@1, problem-frame@1, and product-contract@1; do not reconstruct the source transcript."
+  },
+  "stages": [
+    {"id": "intake", "status": "PASSED", "gate_id": "GATE-INTAKE"},
+    {"id": "framing", "status": "PASSED", "gate_id": "GATE-FRAMING"},
+    {"id": "contract", "status": "PASSED", "gate_id": "GATE-CONTRACT"},
+    {"id": "repository_analysis", "status": "PENDING", "gate_id": "GATE-REPOSITORY"},
+    {"id": "implementation", "status": "PENDING", "gate_id": "GATE-IMPLEMENTATION"},
+    {"id": "verification", "status": "PENDING", "gate_id": "GATE-VERIFICATION"},
+    {"id": "repair", "status": "PENDING", "gate_id": "GATE-REPAIR"},
+    {"id": "release", "status": "PENDING", "gate_id": "GATE-RELEASE"}
+  ],
+  "gates": [
+    {
+      "id": "GATE-INTAKE",
+      "status": "PASSED",
+      "evidence_refs": ["build-request@1"],
+      "rationale": "The request identifies the product, sources, target, constraints, decisions, and framing handoff."
+    },
+    {
+      "id": "GATE-FRAMING",
+      "status": "PASSED",
+      "evidence_refs": ["problem-frame@1"],
+      "rationale": "The frame reports PASS with no assumption or blocker."
+    },
+    {
+      "id": "GATE-CONTRACT",
+      "status": "PASSED",
+      "evidence_refs": ["product-contract@1"],
+      "rationale": "The contract reports PASS and contains embedded requirement-to-acceptance mapping."
+    },
+    {
+      "id": "GATE-REPOSITORY",
+      "status": "PENDING",
+      "evidence_refs": [],
+      "rationale": "Repository inspection is Phase 3 execution work and has not occurred in this example."
+    },
+    {
+      "id": "GATE-IMPLEMENTATION",
+      "status": "PENDING",
+      "evidence_refs": [],
+      "rationale": "No implementation exists in this Phase 2 contract example."
+    },
+    {
+      "id": "GATE-VERIFICATION",
+      "status": "PENDING",
+      "evidence_refs": ["verification-report@1"],
+      "rationale": "The active report is UNVERIFIED because implementation evidence does not exist."
+    },
+    {
+      "id": "GATE-REPAIR",
+      "status": "PENDING",
+      "evidence_refs": [],
+      "rationale": "No evidence-based implementation failure has started a repair loop."
+    },
+    {
+      "id": "GATE-RELEASE",
+      "status": "PENDING",
+      "evidence_refs": [],
+      "rationale": "Release is prohibited while implementation and verification gates are incomplete."
+    }
+  ],
+  "active_artifacts": {
+    "build_request": {
+      "artifact_id": "build-request",
+      "version": 1,
+      "path": "docs/contracts/examples/filename_normalizer/build_request.yaml"
+    },
+    "problem_frame": {
+      "artifact_id": "problem-frame",
+      "version": 1,
+      "path": "docs/contracts/examples/filename_normalizer/problem_frame.md"
+    },
+    "product_contract": {
+      "artifact_id": "product-contract",
+      "version": 1,
+      "path": "docs/contracts/examples/filename_normalizer/product_contract.yaml"
+    },
+    "run_state": {
+      "artifact_id": "run-state",
+      "version": 1,
+      "path": "docs/contracts/examples/filename_normalizer/run_state.json"
+    },
+    "verification_report": {
+      "artifact_id": "verification-report",
+      "version": 1,
+      "path": "docs/contracts/examples/filename_normalizer/verification_report.md"
+    }
+  },
+  "repair": {
+    "active_attempt": 0,
+    "maximum_attempts": 2,
+    "last_failure_ref": null
+  },
+  "bounce_back_events": [
+    {
+      "id": "BB-001",
+      "created_at": "2026-08-09T17:45:11+09:00",
+      "origin": {
+        "role": "independent_verifier",
+        "invocation_ref": "phase2-contract-example-verification-1",
+        "result_artifact_ref": "verification-report@1",
+        "result": "UNVERIFIED"
+      },
+      "assigned_to": "root_codex",
+      "classification": "EVIDENCE_GAP",
+      "status": "OPEN",
+      "summary": "No implementation, runtime, test, documentation, or package evidence exists for REQ-001 through REQ-015.",
+      "affected_stages": ["verification", "release"],
+      "affected_refs": [
+        "REQ-001", "REQ-002", "REQ-003", "REQ-004", "REQ-005",
+        "REQ-006", "REQ-007", "REQ-008", "REQ-009", "REQ-010",
+        "REQ-011", "REQ-012", "REQ-013", "REQ-014", "REQ-015"
+      ],
+      "required_resolution": "Complete repository analysis and implementation, then acquire the acceptance evidence defined by ACC-001 through ACC-015.",
+      "resolution": null,
+      "retry": {
+        "agent_role": "independent_verifier",
+        "allowed": false,
+        "change_basis": [],
+        "prior_invocation_ref": "phase2-contract-example-verification-1"
+      }
+    }
+  ],
+  "blockers": [],
+  "required_approvals": []
+}

@@ -1,0 +1,25 @@
+# Local Python environments and caches.
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local Git history is created after extraction, never distributed in the ZIP.
+.git/
+
+# Generated workflow evidence and disposable work. Keep scaffold READMEs visible.
+/workspace/build_runs/*
+!/workspace/build_runs/README.md
+/demo_workspace/*
+!/demo_workspace/README.md
+/test_workspace/t/*
+!/test_workspace/t/README.md
+!/test_workspace/t/.gitkeep
+/dist/
+.env
+.env.*
+!.env.example
+
+# Product source under codex_workspace/ is intentionally tracked.

@@ -1,0 +1,69 @@
+# Example only. Replace every binding path and digest with the exact inspected
+# candidate identities before use.
+schema_version: "1.0"
+
+binding:
+  contract_ref: product-contract@1
+  contract_path: workspace/build_runs/example/20_contract/product_contract.yaml
+  contract_sha256: 0000000000000000000000000000000000000000000000000000000000000000
+  manifest_path: workspace/build_runs/example/50_release/release_manifest.json
+  manifest_sha256: 0000000000000000000000000000000000000000000000000000000000000000
+  inspection_path: workspace/build_runs/example/50_release/package_inspection.json
+  inspection_sha256: 0000000000000000000000000000000000000000000000000000000000000000
+  archive_path: deliverables/example.zip
+  archive_sha256: 0000000000000000000000000000000000000000000000000000000000000000
+
+scenario_minimums:
+  complete_suite: 2
+  help: 1
+  import: 1
+  cli: 1
+  packaging_layout: 1
+  legacy_or_open_result: 1
+
+commands:
+  - id: complete-suite-first
+    scenario: complete_suite
+    argv: [python, -m, pytest, -q, "--basetemp={temp_root}/pytest", "--junitxml={output_root}/suite.xml"]
+    cwd: .
+    expected_exit_codes: [0]
+    timeout_seconds: 300
+    outputs:
+      - path: suite.xml
+        required: true
+  - id: complete-suite-second
+    scenario: complete_suite
+    argv: [python, -m, pytest, -q, "--basetemp={temp_root}/pytest"]
+    cwd: .
+    expected_exit_codes: [0]
+    outputs: []
+  - id: help-smoke
+    scenario: help
+    argv: [python, tool.py, --help]
+    cwd: .
+    expected_exit_codes: [0]
+    outputs: []
+  - id: import-smoke
+    scenario: import
+    argv: [python, -c, "import tool"]
+    cwd: .
+    expected_exit_codes: [0]
+    outputs: []
+  - id: cli-smoke
+    scenario: cli
+    argv: [python, tool.py]
+    cwd: .
+    expected_exit_codes: [0]
+    outputs: []
+  - id: packaging-layout
+    scenario: packaging_layout
+    argv: [python, -c, "from pathlib import Path; assert Path('README.md').is_file()"]
+    cwd: .
+    expected_exit_codes: [0]
+    outputs: []
+  - id: legacy-open-result
+    scenario: legacy_or_open_result
+    argv: [python, -c, "print('contract-specific legacy/open-result smoke')"]
+    cwd: .
+    expected_exit_codes: [0]
+    outputs: []

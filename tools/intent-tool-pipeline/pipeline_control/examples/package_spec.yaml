@@ -1,0 +1,41 @@
+# Deterministic release package specification. This file is an example, not auto-discovered configuration.
+schema_version: "1.0" # Supported major: 1.
+
+# Active repository-relative maintained source directory. It cannot contain the outputs below.
+source_root: codex_workspace/filename_normalizer
+
+# Active single archive-root name. Slashes, '.' and '..' are rejected.
+artifact_root: filename_normalizer
+
+# Active repository-relative outputs. Both must remain inside the repository and outside source_root.
+archive_path: deliverables/filename_normalizer.zip
+manifest_path: workspace/build_runs/filename-normalizer-phase3-pilot/50_release/release_manifest.json
+
+# Active source-relative selection patterns. Only matches from this approved list can enter the archive.
+include:
+  - normalize_names.py
+  - README.md
+  - examples
+  - tests
+
+# Active exact source-relative files that must be present after selection and exclusions.
+required:
+  - normalize_names.py
+  - README.md
+  - examples/README.md
+  - tests/test_normalize_names.py
+
+# Active approval binding. The contract ref must match run_state's active product contract,
+# and every decision ref must be APPROVED in that contract.
+approval:
+  contract_ref: product-contract@3
+  decision_refs: [DEC-007]
+  # Each role is mandatory, paths cannot overlap roles, and every path must also appear in required.
+  required_roles:
+    readme: [README.md]
+    source: [normalize_names.py]
+    tests: [tests/test_normalize_names.py]
+    examples: [examples/README.md]
+
+# Optional active extra prohibitions. Built-in cache, bytecode, Excel, temp, and desktop-file exclusions always apply.
+exclude: []

@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.1",
+  "artifact": {
+    "artifact_id": "run-state",
+    "version": 1,
+    "lifecycle_status": "DRAFT",
+    "owner_role": "root_codex",
+    "created_at": null,
+    "updated_at": null
+  },
+  "run": {
+    "run_id": "replace-me",
+    "project_id": "replace-me",
+    "current_stage": "intake",
+    "next_allowed_action": "Complete and validate build_request.yaml."
+  },
+  "stages": [
+    {"id": "intake", "status": "IN_PROGRESS", "gate_id": "GATE-INTAKE"},
+    {"id": "framing", "status": "PENDING", "gate_id": "GATE-FRAMING"},
+    {"id": "contract", "status": "PENDING", "gate_id": "GATE-CONTRACT"},
+    {"id": "repository_analysis", "status": "PENDING", "gate_id": "GATE-REPOSITORY"},
+    {"id": "implementation", "status": "PENDING", "gate_id": "GATE-IMPLEMENTATION"},
+    {"id": "verification", "status": "PENDING", "gate_id": "GATE-VERIFICATION"},
+    {"id": "repair", "status": "PENDING", "gate_id": "GATE-REPAIR"},
+    {"id": "release", "status": "PENDING", "gate_id": "GATE-RELEASE"}
+  ],
+  "gates": [
+    {
+      "id": "GATE-INTAKE",
+      "status": "PENDING",
+      "evidence_refs": [],
+      "rationale": "Not yet evaluated."
+    }
+  ],
+  "active_artifacts": {
+    "build_request": {"artifact_id": "build-request", "version": 1, "path": "00_intake/build_request.yaml"},
+    "problem_frame": null,
+    "product_contract": null,
+    "run_state": {"artifact_id": "run-state", "version": 1, "path": "30_execution/run_state.json"},
+    "verification_report": null
+  },
+  "control": {
+    "semantic_role_boundary": "1.0",
+    "verification_validation_identity": null,
+    "revision_baseline": null
+  },
+  "repair": {
+    "active_attempt": 0,
+    "maximum_attempts": 2,
+    "last_failure_ref": null
+  },
+  "bounce_back_events": [],
+  "blockers": [],
+  "required_approvals": []
+}

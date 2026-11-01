@@ -1,0 +1,100 @@
+# Minimal build intake. Replace every example placeholder before activation.
+schema_version: "1.0" # Supported Phase 2 artifact-contract schema.
+artifact:
+  artifact_id: build-request # Stable within this run.
+  version: 1 # Increment after a downstream stage consumes this artifact.
+  lifecycle_status: DRAFT # DRAFT | ACTIVE | SUPERSEDED
+  owner_role: root_codex
+  created_at: null # ISO 8601 timestamp with timezone; null only in templates.
+  updated_at: null
+
+project:
+  project_id: replace-me # Lowercase letters, digits, hyphens; also names the run directory.
+  name: Replace Me
+  request_kind: NEW_PRODUCT # NEW_PRODUCT | REVISION
+  summary: Replace with the requested product or revision.
+
+# REVISION only: uncomment both mappings together. The initializer accepts only an
+# exact completed verified baseline and scope_classification: BOUNDED.
+# revision_of:
+#   run_id: completed-run-id
+#   archive_sha256: replace-with-lowercase-sha256
+#   product_contract_ref: product-contract@1
+#   product_contract_sha256: replace-with-lowercase-sha256
+#   verification_report_ref: verification-report@1
+#   verification_report_sha256: replace-with-lowercase-sha256
+# delta_request:
+#   scope_classification: BOUNDED
+#   requested_changes:
+#     - id: DELTA-001
+#       statement: Replace with one bounded requested change.
+#   explicit_non_changes:
+#     - id: NONCHANGE-001
+#       statement: Replace with behavior that must remain exact.
+#   feedback_evidence:
+#     - id: FEEDBACK-001
+#       source_ref: SRC-001
+#       summary: Replace with the feedback that triggered this revision.
+
+requested_outcome:
+  objective: Replace with the user-visible outcome.
+  deliverables: [] # List requested source, documentation, tests, examples, or packages.
+  success_summary: Replace with a concise definition of success.
+
+source_context:
+  # Authority: USER_APPROVED | USER_PROVIDED | APPROVED_ARTIFACT | REFERENCE_ONLY
+  - source_id: SRC-001
+    type: DISCUSSION # DISCUSSION | HANDOFF | FILE | REPOSITORY | ISSUE
+    path: null # Repository-relative path when the source is a local artifact.
+    authority: USER_PROVIDED
+    description: Replace with what this source contributes.
+
+build_profile:
+  profile_id: default_tool_profile
+  path: workspace/build_profiles/default_tool_profile.yaml
+
+target:
+  repository_path: codex_workspace/replace-me # User deliverables normally live under codex_workspace/.
+  output_path: deliverables/replace-me.zip
+
+constraints: [] # Observable, compatibility, dependency, safety, or environment constraints.
+
+user_decisions:
+  # Status: APPROVED | REJECTED | DEFERRED | SUPERSEDED
+  - id: DEC-001
+    statement: Replace with an explicit user decision.
+    rationale: Replace with the reason or use "Not provided".
+    owner: user
+    status: APPROVED
+    source_ref: SRC-001
+    impact: Replace with affected behavior, scope, or validation.
+
+assumptions: []
+# Example item:
+# - id: ASM-001
+#   statement: A visible low-impact assumption.
+#   owner: root_codex
+#   source_ref: SRC-001
+#   behavior_impact_if_wrong: LOW # NONE | LOW | MATERIAL
+#   requires_user_confirmation: false
+#   status: OPEN # OPEN | RESOLVED | ACCEPTED | DEFERRED
+
+blockers: []
+# Example item:
+# - id: BLK-001
+#   statement: A material condition preventing framing.
+#   owner: user
+#   affected_stage: framing
+#   blocking: true
+#   status: OPEN # OPEN | RESOLVED | ACCEPTED | DEFERRED
+#   resolution_needed: The decision, permission, or evidence required.
+
+handoff:
+  readiness: PASS # PASS | PASS_WITH_ASSUMPTIONS | BLOCKED
+  next_stage: framing # A preparation; use contract for sufficiently clear direct B.
+  required_inputs:
+    - build-request
+  rationale: Replace with why the selected entry is ready and its authority is sufficient.
+# Original-intent/delegation snapshot source_context records may include
+# content_sha256 and a repository-relative path. New initialization binds this
+# entire request in run_state; do not put the request's own hash inside itself.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Rework Product Documentation"
+  short_description: "Rebuild evidence-based operator documentation paths"
+  default_prompt: "Use $rework-product-docs to inspect this product and rework its SKILL, README, and references within the permitted documentation scope."

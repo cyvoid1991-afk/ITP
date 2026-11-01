@@ -1,0 +1,7 @@
+interface:
+  display_name: "Product Contract Authoring"
+  short_description: "Turn approved product intent into an acceptance contract"
+  default_prompt: "Use $author-product-contract to create a behavioral and acceptance contract from this approved product intent."
+
+policy:
+  allow_implicit_invocation: true

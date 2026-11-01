@@ -1,0 +1,4 @@
+interface:
+  display_name: "Problem Framing"
+  short_description: "Structure ambiguous problems into decision-ready frames"
+  default_prompt: "Use $problem-framing to structure this problem into a decision-ready framing."

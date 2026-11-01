@@ -1,0 +1,4 @@
+interface:
+  display_name: "Minor Tool Revision"
+  short_description: "Revise and package local tools with carry-forward evidence"
+  default_prompt: "Use $minor-tool-revision for this bounded tool revision or local patch/full delivery and preserve its evidence for the next pipeline revision."

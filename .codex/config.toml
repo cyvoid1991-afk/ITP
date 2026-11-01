@@ -1,0 +1,7 @@
+# Root Codex may delegate bounded, independent work to sub-agents. The project
+# custom-agent configurations override this setting to prevent nested spawning.
+[agents]
+enabled = true
+max_concurrent_threads_per_session = 3
+default_subagent_model = "gpt-6.1-sol"
+default_subagent_reasoning_effort = "high"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Build Tool Pipeline"
+  short_description: "Orchestrate gated local tool delivery"
+  default_prompt: "Use $build-tool-pipeline to turn this approved tool request into a verified local deliverable."

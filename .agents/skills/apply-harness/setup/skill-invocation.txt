@@ -1,0 +1,5 @@
+$apply-harness Review this implementation using Light controls.
+
+$apply-harness Use Standard to design verification and handoff controls for this workflow.
+
+$apply-harness Design the harness for this workflow without implementation; specify contracts and checks, and mark execution NOT_RUN.

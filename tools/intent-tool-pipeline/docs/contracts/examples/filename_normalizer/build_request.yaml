@@ -1,0 +1,82 @@
+schema_version: "1.0"
+artifact:
+  artifact_id: build-request
+  version: 1
+  lifecycle_status: ACTIVE
+  owner_role: root_codex
+  created_at: "2026-08-09T17:45:11+09:00"
+  updated_at: "2026-08-09T17:45:11+09:00"
+
+project:
+  project_id: filename-normalizer-example
+  name: Batch Filename Normalizer
+  request_kind: NEW_PRODUCT
+  summary: Build a Python CLI that previews and safely applies deterministic filename normalization in one local directory.
+
+requested_outcome:
+  objective: Let an operations analyst normalize eligible CSV and JSON filenames without manual edits or silent overwrites.
+  deliverables:
+    - normalize_names.py
+    - tests
+    - README.md
+    - example directory description
+  success_summary: Preview is non-mutating, apply performs only preflight-approved renames, failures are visible, and results are deterministic.
+
+source_context:
+  - source_id: SRC-001
+    type: HANDOFF
+    path: experiments/subagent_practice/test_input.md
+    authority: USER_APPROVED
+    description: Approved Phase 1 controlled product and UX decisions.
+  - source_id: SRC-002
+    type: FILE
+    path: experiments/subagent_practice/actual_output.md
+    authority: APPROVED_ARTIFACT
+    description: Approved Problem Framer output derived only from SRC-001.
+
+build_profile:
+  profile_id: default_tool_profile
+  path: workspace/build_profiles/default_tool_profile.yaml
+
+target:
+  repository_path: codex_workspace/filename_normalizer
+  output_path: deliverables/filename_normalizer.zip
+
+constraints:
+  - Python 3.11 or later.
+  - Python standard library only.
+  - Windows and Linux path compatibility.
+  - No GUI, watcher, recursive processing, undo, or external deployment.
+
+user_decisions:
+  - id: DEC-001
+    statement: Preview is the default and --apply is required for filesystem mutation.
+    rationale: The operator must see the complete proposed batch before renaming.
+    owner: user
+    status: APPROVED
+    source_ref: SRC-001
+    impact: Defines the primary safety and UX boundary.
+  - id: DEC-002
+    statement: Collisions and occupied targets are classified before the first rename, and existing files are never overwritten except for rename_report.csv replacement.
+    rationale: Results must not depend on directory enumeration or rename order.
+    owner: user
+    status: APPROVED
+    source_ref: SRC-001
+    impact: Defines preflight and overwrite behavior.
+  - id: DEC-003
+    statement: A per-file rename failure does not stop remaining operations and produces final exit code 1.
+    rationale: Isolated operational failures should not prevent safe independent renames.
+    owner: user
+    status: APPROVED
+    source_ref: SRC-001
+    impact: Defines partial-success behavior and reporting.
+
+assumptions: []
+blockers: []
+
+handoff:
+  readiness: PASS
+  next_stage: framing
+  required_inputs:
+    - build-request
+  rationale: The approved source defines observable behavior and contains no unresolved material product decision.

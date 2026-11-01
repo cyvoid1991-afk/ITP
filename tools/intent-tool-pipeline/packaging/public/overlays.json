@@ -1,0 +1,12 @@
+{
+  "README.md": "tools/intent-tool-pipeline/packaging/public/overlays/readme.txt",
+  "AGENTS.md": "tools/intent-tool-pipeline/packaging/public/overlays/agents.txt",
+  "CHANGELOG.md": "tools/intent-tool-pipeline/packaging/public/overlays/changelog.txt",
+  ".gitignore": "tools/intent-tool-pipeline/packaging/public/overlays/gitignore.txt",
+  "SOURCE_IDENTITY.md": "tools/intent-tool-pipeline/packaging/public/overlays/source-identity.txt",
+  "tools/intent-tool-pipeline/VERSION": "tools/intent-tool-pipeline/packaging/public/overlays/version.txt",
+  "tools/intent-tool-pipeline/docs/getting-started.md": "tools/intent-tool-pipeline/packaging/public/overlays/getting-started.txt",
+  "tools/intent-tool-pipeline/docs/distribution.md": "tools/intent-tool-pipeline/packaging/public/overlays/distribution.txt",
+  ".gitattributes": "tools/intent-tool-pipeline/packaging/public/overlays/gitattributes.txt",
+  "tools/intent-tool-pipeline/.gitattributes": "tools/intent-tool-pipeline/packaging/public/overlays/gitattributes.txt"
+}

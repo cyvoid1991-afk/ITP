@@ -1,0 +1,19 @@
+{
+  "revision": "AGENT-20261011-CIS",
+  "date": "2026-10-11",
+  "status": "RETIRED",
+  "successor": "collaborative_intent_shaping_agent",
+  "reason": "User-authorized consolidation under the final supplied semantic.",
+  "agents": {
+    "problem_framer": {
+      "path": ".codex/retired/problem_framer.toml",
+      "sha256": "d5d4edc463ca1c61196cf82e37fd40d505ac0a5a7926b4cbf0d4928f6420109b",
+      "previous_path": ".codex/agents/problem_framer.toml"
+    },
+    "collaborative_intent_framing_agent": {
+      "path": ".codex/retired/collaborative_intent_framing_agent.toml",
+      "sha256": "99296b96aa3f1672d4767e923c7f8f89f832475a78640f68507a40043b473a62",
+      "previous_path": ".codex/agents/collaborative_intent_framing_agent.toml"
+    }
+  }
+}

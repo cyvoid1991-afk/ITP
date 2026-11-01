@@ -1,0 +1,4 @@
+interface:
+  display_name: "Apply Harness"
+  short_description: "Portable quality, evidence, and work continuity"
+  default_prompt: "Use $apply-harness with the Light profile for this task; apply Standard or workflow construction controls only if I explicitly request them."

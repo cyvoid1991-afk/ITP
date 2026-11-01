@@ -1,0 +1,215 @@
+{
+  "format": "itp-document-policy-1",
+  "unbundled_references": [
+    {
+      "source": ".agents/skills/apply-harness/setup/AGENTS.full.md",
+      "target": ".agents/skills/apply-harness/setup/.agents/skills/apply-harness/SKILL.md",
+      "reason": "Portable setup template link resolves after merging its text into the target repository root AGENTS.md, not from this template location.",
+      "kind": "template-context"
+    },
+    {
+      "source": ".codex/agents/README.md",
+      "target": ".codex/agents/sources/product-intake-draft-v0.1.md",
+      "reason": "Original semantic attachment retained as source provenance; the complete current registered role instructions are bundled in the standalone TOML.",
+      "kind": "source-only"
+    },
+    {
+      "source": ".codex/agents/README.md",
+      "target": ".codex/agents/sources/theoretical-analysis-original.txt",
+      "reason": "Original semantic attachment retained as source provenance; the complete current registered role instructions are bundled in the standalone TOML.",
+      "kind": "source-only"
+    },
+    {
+      "source": ".codex/agents/README.md",
+      "target": "develop/framing-agent/registration.md",
+      "reason": "Historical registration verification retained only in the source repository; current configurations and discovery instructions are bundled.",
+      "kind": "source-only"
+    },
+    {
+      "source": ".codex/agents/README.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s4-checkpoint.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/CHANGELOG.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/checkpoint.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/CHANGELOG.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s1-checkpoint.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/CHANGELOG.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s2-checkpoint.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/CHANGELOG.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s3-checkpoint.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/CHANGELOG.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s4-checkpoint.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/CHANGELOG.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s5-checkpoint.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/CHANGELOG.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s5-design-addendum.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/CHANGELOG.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s6-checkpoint.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/CHANGELOG.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s7-checkpoint.md",
+      "kind": "source-only",
+      "reason": "S7 framework activation evidence retained only in the source repository; operational selection and recovery guidance is bundled."
+    },
+    {
+      "source": "tools/intent-tool-pipeline/CHANGELOG.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/agent-artifact-implementation-plan.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/CHANGELOG.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/agent-artifact-revision-plan.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/docs/contracts/agent-artifact-protocol.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/agent-artifact-implementation-plan.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/docs/contracts/agent-artifact-protocol.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/agent-artifact-revision-plan.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/docs/contracts/procedure-binding.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s5-design.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/docs/governance/Root_Delegation_and_Delta_Procedure_v0.3.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s4-checkpoint.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/intent_deliver/README.md",
+      "target": "tools/intent-tool-pipeline/intent_deliver/discussion-capture/commissioning-request.md",
+      "reason": "Original product intent retained in the source repository; product input is outside the framework publication boundary.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/workspace/framework_development/README.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/checkpoint.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/workspace/framework_development/README.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s1-checkpoint.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/workspace/framework_development/README.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s2-checkpoint.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/workspace/framework_development/README.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s3-checkpoint.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/workspace/framework_development/README.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s4-checkpoint.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/workspace/framework_development/README.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s4-harness-review.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/workspace/framework_development/README.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s5-acceptance.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/workspace/framework_development/README.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s5-checkpoint.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/workspace/framework_development/README.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s5-design-addendum.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/workspace/framework_development/README.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s6-acceptance.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/workspace/framework_development/README.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s6-checkpoint.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/workspace/framework_development/README.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/aa-impl/s7-checkpoint.md",
+      "kind": "source-only",
+      "reason": "S7 framework activation evidence retained only in the source repository; operational selection and recovery guidance is bundled."
+    },
+    {
+      "source": "tools/intent-tool-pipeline/workspace/framework_development/README.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/agent-artifact-implementation-plan.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/workspace/framework_development/README.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/agent-artifact-revision-plan.md",
+      "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
+      "kind": "source-only"
+    }
+  ]
+}
