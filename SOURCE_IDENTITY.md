@@ -1,5 +1,18 @@
 # Public source identity
 
+## Current source maintenance
+
+`main` now contains the source maintenance revision
+`DELEGATION-20261104-WORKERS` (2026-11-04), synchronized from Nexus_AI commit
+`5d4055e9b5059ee698808784f766b1ce7811b2fb` in `cyvoid1991-afk/CDAX-study`.
+It changes authorized worker model/effort settings and related guidance/history;
+it does not create a replacement public seed. Original SOURCE_MANIFEST.json,
+PUBLIC_PROVENANCE.json and DOCUMENT_REFERENCES.json retain their original bytes
+and refer to the initial snapshot. They do not attest to modified source files.
+See [current history](CHANGELOG.md) for scope and actual checks.
+
+## Original published snapshot
+
 **This seed is public candidate `0.3.0-rc.1`, assembled from explicitly selected
 Nexus_AI working-tree files, including local changes.** It does not claim a clean
 upstream commit or reuse the old 0.2.0 import manifest as current verification.

@@ -1,5 +1,15 @@
 # Changelog
 
+## DELEGATION-20261104-WORKERS - 2026-11-04 - Synchronize worker policy
+
+- Align the duplicate worker rule in AGENTS.md with the shared policy imported
+  from Nexus_AI commit `5d4055e9b5059ee698808784f766b1ce7811b2fb`:
+  Sol/Terra with medium/high replaces Sol/Luna with low/medium/high.
+- Defaults, semantic roles, control revisions, state and release rules remain.
+  Policy consistency, source correspondence, links and whitespace checked.
+  Live dispatch and executable tests are NOT_RUN. Original seed metadata and
+  release identities are preserved; root history records the source-only delta.
+
 ## ITP-20261101-PUBLIC - 2026-11-01 - Standalone public packaging profile
 
 - Trigger: user requested a fresh public `ITP` repository and an installable

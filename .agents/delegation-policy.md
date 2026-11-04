@@ -8,7 +8,7 @@ does not expand delegation authority or start a pipeline workflow.
 
 - During authorized coding work, built-in `worker` agents may handle
   implementation, fixes, and tests when the current runtime permits delegation.
-- Explicitly select `gpt-6.1-sol` or `gpt-6-luna` with `low`, `medium`, or `high`
+- Explicitly select `gpt-6.1-sol` or `gpt-6.1-terra` with `medium` or `high`
   reasoning. Other worker settings require user authorization; custom-role
   settings are treated separately.
 - When model overrides require partial or no history, use `fork_turns="none"`

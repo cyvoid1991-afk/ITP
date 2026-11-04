@@ -6,6 +6,16 @@ This public seed is candidate **0.3.0-rc.1**, assembled from explicitly inventor
 Nexus_AI working-tree source. Repository: [cyvoid1991-afk/ITP](https://github.com/cyvoid1991-afk/ITP).
 Read the [source identity](SOURCE_IDENTITY.md) and `DISTRIBUTION_NOTICE.md`.
 
+## Current source and original seed
+
+`main` includes post-seed source maintenance recorded in [history](CHANGELOG.md),
+including the 2026-11-04 worker-policy synchronization. The preserved root
+manifest and provenance describe the original `0.3.0-rc.1` snapshot, not later
+source changes. The seed integrity check is expected to report those changes
+on current `main`; do not rewrite the old metadata to conceal the difference.
+For current-source use, keep `main`, review its history and follow environment
+setup and applicable tests below without claiming original-seed integrity.
+
 ## Fresh installation
 
 Extract `intent-tool-pipeline-0.3.0-rc.1.zip` into a new, short path, such as
@@ -21,7 +31,11 @@ Alternatively, clone the public repository into a new short directory:
 ```powershell
 git clone https://github.com/cyvoid1991-afk/ITP.git C:\itp
 Set-Location C:\itp
+git checkout --detach c80f332f41348870ac133954d3284511709fbbdc
 ```
+
+The checkout command selects the original seed for the integrity procedure.
+Omit it when intentionally using current `main` as described above.
 
 The bundled `.gitattributes` disables text conversion so Git preserves manifest
 and procedure bytes even when `core.autocrlf=true`. GitHub's generated source

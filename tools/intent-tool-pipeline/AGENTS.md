@@ -91,7 +91,7 @@ materially improves speed or quality; Root owns integration and final validation
 
 - During authorized coding work, Root may spawn built-in `worker` agents for
   implementation, fixes, and tests without further confirmation. Explicitly
-  choose `gpt-6.1-sol` or `gpt-6-luna` and `low`, `medium`, or `high` reasoning.
+  choose `gpt-6.1-sol` or `gpt-6.1-terra` and `medium` or `high` reasoning.
   Other worker settings require user authorization; custom-role settings are separate.
 - When model overrides require partial/no history, use `fork_turns="none"` and
   supply context, inputs, expected outputs, and exclusive file ownership. Tell

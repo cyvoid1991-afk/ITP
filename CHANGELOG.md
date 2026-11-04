@@ -1,5 +1,21 @@
 # ITP public seed history
 
+## 2026-11-04 - DELEGATION-20261104-WORKERS - Synchronize built-in worker policy
+
+- User requested syncing the Nexus_AI delegation policy to this repository.
+  Source: `cyvoid1991-afk/CDAX-study`, commit
+  `5d4055e9b5059ee698808784f766b1ce7811b2fb`, `.agents/delegation-policy.md`.
+- Replace Luna with Terra and remove low effort in both active worker rules:
+  Sol/Terra with medium/high. Preserve Sol/high defaults, custom roles,
+  delegation authority, Root ownership and verifier independence.
+- This is a post-seed source maintenance revision, not a new seed or release.
+  Preserve original manifests/provenance and document their initial-snapshot
+  scope in README and SOURCE_IDENTITY. No automatic run migration or new gates.
+- Verification: initial manifest-listed bytes matched before editing; synchronized
+  policy text, duplicate-rule agreement, local links, protected metadata hashes,
+  changed-path scope and whitespace checked. Live dispatch, model access and
+  executable tests are NOT_RUN; no executable source was changed.
+
 ## 2026-11-01 — ITP-PUBLIC-0.3.0-rc.1
 
 **The initial public candidate publishes a curated, rebuildable ITP operational
