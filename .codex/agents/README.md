@@ -9,12 +9,12 @@ identifies each role. See the [official custom-agent documentation](https://lear
 
 | Agent | Purpose | Model / effort | Write boundary |
 | --- | --- | --- | --- |
-| [theoretical_analysis_agent](theoretical_analysis_agent.toml) | Mathematical and engineering model validity, derivation review, assumptions, and interpretation | `gpt-6.1-sol` / `high` | Read-only |
-| [product_intake_consultant](product_intake_consultant.toml) | Free discussion, challenge, clarification, and convergence of user product/tool intent before formal framing | `gpt-6-astra` / `high` | Read-only |
-| [collaborative_intent_shaping_agent](collaborative_intent_shaping_agent.toml) | Make partially understood problems concrete, examine solution directions, and progressively refine user intent | `gpt-6-astra` / `high` | Read-only |
-| [intent_realizer](intent_realizer.toml) | Discover realization conditions for supplied intent | `gpt-6-astra` / `high` | Read-only by default; exact bound submission only |
-| [product_contract_agent](product_contract_agent.toml) | Behavioral and acceptance contract authoring | `gpt-6.1-sol` / `high` | Read-only by default; exact bound submission only |
-| [independent_verifier](independent_verifier.toml) | Independent evidence-based verification | `gpt-6.1-sol` / `high` | Bound result file and explicitly isolated evidence only |
+| [theoretical_analysis_agent](theoretical_analysis_agent.toml) | Mathematical and engineering model validity, derivation review, assumptions, and interpretation | `gpt-6.2-sol` / `high` | Read-only |
+| [product_intake_consultant](product_intake_consultant.toml) | Free discussion, challenge, clarification, and convergence of user product/tool intent before formal framing | `gpt-6.2-astra` / `high` | Read-only |
+| [collaborative_intent_shaping_agent](collaborative_intent_shaping_agent.toml) | Make partially understood problems concrete, examine solution directions, and progressively refine user intent | `gpt-6.2-astra` / `high` | Read-only |
+| [intent_realizer](intent_realizer.toml) | Discover realization conditions for supplied intent | `gpt-6.2-astra` / `high` | Read-only by default; exact bound submission only |
+| [product_contract_agent](product_contract_agent.toml) | Behavioral and acceptance contract authoring | `gpt-6.2-sol` / `high` | Read-only by default; exact bound submission only |
+| [independent_verifier](independent_verifier.toml) | Independent evidence-based verification | `gpt-6.2-sol` / `high` | Bound result file and explicitly isolated evidence only |
 
 Use a local Codex session opened in this repository. Root coordinates custom
 roles through the supported subagent tools; configuration alone does not start a

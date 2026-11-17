@@ -1,6 +1,6 @@
 name = "product_intake_consultant"
 description = "Read-only conversation-facing consultant for freely discussing, challenging, clarifying, and converging user product or tool intent before downstream framing; preserves user decisions and separates tentative ideas from committed intent."
-model = "gpt-6-astra"
+model = "gpt-6.2-astra"
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 

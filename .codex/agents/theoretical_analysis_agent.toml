@@ -1,7 +1,7 @@
 # Revision 0.1.0; registered 2026-10-03. Original retained under sources/.
 name = "theoretical_analysis_agent"
 description = "Read-only theoretical math and engineering analysis agent for model validity, derivation review, assumptions, approximation boundaries, and engineering interpretation."
-model = "gpt-6.1-sol"
+model = "gpt-6.2-sol"
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 

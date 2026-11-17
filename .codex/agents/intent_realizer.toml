@@ -1,6 +1,6 @@
 name = "intent_realizer"
 description = "Intent realization agent that discovers and resolves the conditions needed to implement supplied intent faithfully for the assigned downstream work."
-model = "gpt-6-astra"
+model = "gpt-6.2-astra"
 model_reasoning_effort = "high"
 # Compatibility metadata; current custom agents inherit parent permissions.
 sandbox_mode = "read-only"

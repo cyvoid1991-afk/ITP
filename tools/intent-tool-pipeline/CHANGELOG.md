@@ -1,5 +1,14 @@
 # Changelog
 
+## DELEGATION-20261117-GPT62 - 2026-11-17 - Upgrade worker and custom agent models
+
+- Align the pipeline worker rule with the shared policy by using
+  `gpt-6.2-sol` at medium or high effort. The project default is
+  `gpt-6.2-sol` at high effort. Active custom roles use GPT-6.2 in
+  their respective model families and retain high effort.
+- Existing run selectors and role boundaries are preserved. All 17 agent
+  delegation policy tests passed. Live model dispatch was not tested.
+
 ## DELEGATION-20261104-WORKERS - 2026-11-04 - Synchronize worker policy
 
 - Align the duplicate worker rule in AGENTS.md with the shared policy imported

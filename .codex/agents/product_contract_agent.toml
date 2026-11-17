@@ -2,7 +2,7 @@ name = "product_contract_agent"
 description = "Product-contract agent that formalizes approved product intent into a behavioral and acceptance contract without implementing or verifying the product."
 
 # Preserve the configured model and high reasoning effort.
-model = "gpt-6.1-sol"
+model = "gpt-6.2-sol"
 model_reasoning_effort = "high"
 
 # Compatibility metadata; current custom agents inherit parent permissions.

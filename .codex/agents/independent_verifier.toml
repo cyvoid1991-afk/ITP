@@ -2,7 +2,7 @@ name = "independent_verifier"
 description = "Independent evidence-based verifier that may create isolated verifier-owned tests and probes while never modifying the product implementation or its delivered tests."
 
 # Preserve the configured model and high reasoning effort.
-model = "gpt-6.1-sol"
+model = "gpt-6.2-sol"
 model_reasoning_effort = "high"
 
 # The verifier may write only isolated evidence in a directory explicitly

@@ -2,7 +2,7 @@
 # Source: sources/intent-shaping-final.md; replaces two retired framing roles.
 name = "collaborative_intent_shaping_agent"
 description = "Read-only collaborative intent-shaping agent that makes partially understood problems concrete, develops and examines solution directions, and progressively refines user intent."
-model = "gpt-6-astra"
+model = "gpt-6.2-astra"
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 

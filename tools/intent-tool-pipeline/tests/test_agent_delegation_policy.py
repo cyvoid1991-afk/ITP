@@ -34,7 +34,7 @@ def test_root_is_enabled_and_semantic_roles_are_disabled() -> None:
     assert root_config["agents"] == {
         "enabled": True,
         "max_concurrent_threads_per_session": 3,
-        "default_subagent_model": "gpt-6.1-sol",
+        "default_subagent_model": "gpt-6.2-sol",
         "default_subagent_reasoning_effort": "high",
     }
 
@@ -45,20 +45,24 @@ def test_root_is_enabled_and_semantic_roles_are_disabled() -> None:
         assert "Do not spawn" in agent_config["developer_instructions"]
 
 
-def test_pipeline_semantic_agents_preserve_configured_models_and_high_reasoning() -> None:
-    for filename in CUSTOM_AGENT_FILES:
+def test_custom_agents_use_gpt_6_2_and_high_reasoning() -> None:
+    models = {
+        "collaborative_intent_shaping_agent.toml": "gpt-6.2-astra",
+        "intent_realizer.toml": "gpt-6.2-astra",
+        "product_intake_consultant.toml": "gpt-6.2-astra",
+        "independent_verifier.toml": "gpt-6.2-sol",
+        "product_contract_agent.toml": "gpt-6.2-sol",
+        "theoretical_analysis_agent.toml": "gpt-6.2-sol",
+    }
+    for filename, expected in models.items():
         agent_config = _load_toml(REPO_ROOT / ".codex" / "agents" / filename)
-        expected = (
-            "gpt-6-astra"
-            if filename in {"intent_realizer.toml", "collaborative_intent_shaping_agent.toml"}
-            else "gpt-6.1-sol"
-        )
         assert agent_config["model"] == expected
         assert agent_config["model_reasoning_effort"] == "high"
 
 
 def test_root_controlled_delegation_policy_is_explicit() -> None:
     repository_rules = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+    shared_policy = (REPO_ROOT / ".agents" / "delegation-policy.md").read_text(encoding="utf-8")
     pipeline_skill = (
         REPO_ROOT / ".agents" / "skills" / "build-tool-pipeline" / "SKILL.md"
     ).read_text(encoding="utf-8")
@@ -66,6 +70,8 @@ def test_root_controlled_delegation_policy_is_explicit() -> None:
     assert "Root Codex owns top-level delegation" in repository_rules
     assert "custom semantic roles" in repository_rules
     assert "Built-in workers and" in repository_rules
+    for policy in (repository_rules, shared_policy):
+        assert '`gpt-6.2-sol` with `medium` or `high` reasoning' in _normalized(policy)
     assert "Keep top-level delegation Root-owned" in pipeline_skill
     assert "built-in workers and explorers retain" in pipeline_skill
 

@@ -1,5 +1,18 @@
 # ITP public seed history
 
+## 2026-11-17 - DELEGATION-20261117-GPT62 - Upgrade active agent models
+
+- Move the six active custom agents to `gpt-6.2-astra` or `gpt-6.2-sol`
+  according to their previous model family. Set the project subagent default
+  to `gpt-6.2-sol` and use it in both built-in worker rules. The available
+  GPT-6.2 models do not include a Terra variant.
+- Preserve reasoning levels, role instructions and write boundaries.
+  Retired configurations and original seed and release records retain
+  their historical settings.
+- All 17 agent delegation policy tests passed. TOML comparison confirmed
+  that only model values changed, and the role table matches the configuration.
+  Fresh-session discovery and live model dispatch were not tested.
+
 ## 2026-11-04 - DELEGATION-20261104-WORKERS - Synchronize built-in worker policy
 
 - User requested syncing the Nexus_AI delegation policy to this repository.
