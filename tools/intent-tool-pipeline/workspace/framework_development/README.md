@@ -9,6 +9,7 @@ under the tool runtime root. Omitted original source history is described in
 
 ## Revision plans
 
+- [Verification, packaging and stage ownership](verification-and-package-plan.md). The five changes approved on 2026-11-21 are implemented. The plan records their verification.
 - **Current default:** `ITP-20261101-DEFAULT12` applies the user's post-S7
   instruction: new runs default to `1.2`; choose `1.0` only on an explicit legacy
   request. Existing run selectors and history remain unchanged. Current results

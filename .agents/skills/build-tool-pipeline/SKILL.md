@@ -27,10 +27,10 @@ Turn one approved build request into a verified local deliverable while preservi
    `docs/governance/Task_Delegation_Contract_Template_v0.3.md` at intake and resume. They define
    decision authority and handoff content; this skill maps them to runtime gates.
 3. Confirm that the request identifies a concrete tool or code deliverable. If it does not, return to ordinary repository handling.
-4. Keep Root Codex as the only run-state owner, product-source writer, and release owner.
-5. Keep one active writer for each owned artifact. Never let agents concurrently edit `run_state.json` or the product tree.
+4. Keep Root Codex in charge of run state, changes applied to the official product tree, and release.
+5. Give each owned artifact one active writer. Workers prepare implementation changes in isolated workspaces.
 6. Treat every nonzero control-plane result as a stopped gate. Do not reinterpret or bypass it.
-7. For every invocation in this governed workflow, read [invocation.md](references/invocation.md), name the role-specific skill and adapter in the call, and supply their current inputs. Start every `intent_realizer`, `product_contract_agent`, `independent_verifier`, and read-only `explorer` invocation with `role-boundary start`. For semantic artifacts, complete the invocation through `finalize-semantic-return`, which finishes the boundary audit and activates the complete owner-authored artifact as one transaction; selected threshold process review instead finishes its audit without semantic activation. A `BOUNDARY_VIOLATION` result prohibits artifact activation, gate PASS, and stage advancement.
+7. For governed semantic role and read-only explorer invocations, read [invocation.md](references/invocation.md), name the applicable skill and adapter, and supply current inputs. Start every `intent_realizer`, `product_contract_agent`, `independent_verifier`, and read-only `explorer` invocation with `role-boundary start`. For semantic artifacts, complete the invocation through `finalize-semantic-return`, which finishes the boundary audit and activates the complete owner-authored artifact as one transaction; selected threshold process review instead finishes its audit without semantic activation. A `BOUNDARY_VIOLATION` result prohibits artifact activation, gate PASS, and stage advancement.
 8. Keep top-level delegation Root-owned. Root may spawn bounded agents for independent work. The exact custom semantic roles must not spawn further agents; built-in workers and explorers retain the execution environment's current delegation authority.
 
 ### Selected runs and legacy behavior
@@ -227,9 +227,10 @@ implement, write the binding REQ/ACC catalog, or verify the product.
 
 ### Root coordination and critical review
 
-Root normalizes intent, answers agent questions from existing decisions, obtains
-bounded technical evidence and selects routine implementation policies within
-authority. Use an explorer only for a concrete independent repository question
+Root normalizes intent, resolves outstanding specialist questions using the
+original intent, prior decisions and implementation context, and obtains bounded
+technical evidence or makes choices within existing delegated authority. Use an
+explorer only for a concrete independent repository question
 when it fits the retained-agent budget; otherwise Root reads the code directly.
 Never run protected-tree writes during a read-only boundary audit.
 
@@ -240,22 +241,24 @@ Root for a required unavailable semantic role; preserve state and arrange a vali
 runtime handoff. No new observability or reproducibility subsystem is in scope;
 existing tests, integrity checks, and release evidence remain required.
 
-For every consequential bounce-back, record the question, intent/evidence source,
-counterexample or effect, Root answer, decision authority, changed basis and next
-owner in the existing event summary/references and affected artifact. Root first
-resolves what the supplied intent and delegated authority already answer. Ask the
-user only for a material new choice; include a recommendation and its consequences.
+Realizer and Contractor correct omissions in their own artifacts when the supplied
+evidence settles them. For an outstanding issue, the specialist returns to Root
+the sources checked, precise question, practical differences between plausible
+answers, and a recommendation when supported. Root brings a material user-reserved
+choice to the user after checking existing evidence and authority. The specialist
+incorporates the answer and reevaluates readiness. Record the sources, question,
+consequences, answer, decision authority, changed basis and next owner using the
+existing bounce-back summary and references and the affected artifact.
 If a repeated question has no changed basis, stop the unchanged retry and isolate
 the actual decision. Do not invent an additional automatic repair allowance.
 
 ### Contract
 
 At B intake, compare the original source intent, delegation and cumulative changes
-against the prepared handoff or direct request. Sufficiently clear intent must not
-be sent through A merely to complete a checklist. Return only a material missing
-intent/authority/acceptable-loss choice upstream. Root resolves evidence gaps within
-existing authority; Contractor corrects misformalized obligations in B; an
-implementation discrepancy goes to bounded repair after a verifier failure.
+against the prepared handoff or direct request. Contractor corrects source-resolved
+obligations in B and sends outstanding questions to Root. Root resolves gaps within
+existing authority and sends only the affected material user-reserved choice
+upstream. An implementation discrepancy goes to bounded repair after a verifier failure.
 
 Invoke the exact custom role product_contract_agent with [contract-adapter.md](references/contract-adapter.md) explicitly named. Require the author-product-contract workflow and one complete artifact-contract 1.0 contract. Legacy calls remain read-only/full-body; selected "1.1" calls write only the exact assigned submission and return its actual identity/status compactly. Audit and activate it through `finalize-semantic-return`, which records content hash, both owners, source invocation, and boundary evidence. Run `validate-contract` afterward.
 
@@ -293,15 +296,51 @@ Do not turn repository analysis into a second product-framing or contract-author
 
 ### Implementation
 
-Have Root remain the single product-tree writer. Implement only the active contract, add or update tests and user documentation, preserve the deliverable's revision history, and use the repository virtual environment.
+Root implements the active contract, owns architecture decisions affecting multiple
+components, and integrates accepted changes into the official product tree. Add or
+update tests and user documentation, preserve the deliverable's revision history,
+and use the repository virtual environment.
 
 Before writing source, identify the implementation's main responsibilities and choose cohesive module boundaries. Separate domain computation from configuration or input validation, orchestration, rendering, and persistence or publication when they can change independently. If one module would combine three or more such concerns, split it or record why a cohesive single-module design is preferable. Keep a thin stable facade when useful, retain a small cohesive script when separation would add only indirection, and never split solely to meet a line-count target. Treat this as an implementation-quality check, not a product-contract requirement unless observable behavior, feasibility, compatibility, risk, or acceptance depends on the boundary.
 
 Record reversible implementation choices as `AGENT_DECIDED` only when they preserve observable behavior, scope, compatibility, and acceptance. Escalate material choices instead.
 
-Execute the active shell-free test plan through `run-tests --attempt-id <unique-id>` before passing the implementation gate. The command writes immutable evidence under `30_execution/test_attempts/<attempt-id>/test_results.json` and updates the fixed canonical `30_execution/test_results.json` with that attempt identity and hash. Never reuse an attempt ID or substitute cached repeatability evidence. Mark implementation `PASSED` and keep it as the current state while candidate packaging and inspection run. After the inspected candidate exists, enter verification as `IN_PROGRESS`; this is the normal verifier-report registration window and may initially have no active verification report.
+During authorized implementation, Root may assign a bounded change to a built-in
+worker under the [delegation policy](../../delegation-policy.md). Give the worker
+the relevant active contract, agreed interface, scope and expected behavior. Set
+aside capacity for the required semantic roles. The worker prepares a reviewable
+change with test commands and results in an isolated workspace. Root reviews it,
+applies accepted changes and runs the integrated tests. The independent Verifier
+judges the integrated candidate after implementation.
 
-Create the contract-bound candidate archive with `package`, then run `inspect-package`, before invoking the verifier. Treat the archive, release manifest, and passing package inspection as candidate evidence only: keep the release stage `PENDING` and do not call the product released. Packaging is repeatable and invalidates prior inspection, so regenerate and reinspect the candidate whenever attributable source, tests, package specification, or contract approval binding changes.
+Before delegating in parallel, identify a concrete task Root can finish while
+the worker is active using the agreed interface, and a concrete integration
+check with an observable expected result. For example, settle how the parser
+signals empty and malformed files. Root can build the empty-state and error UI
+while a worker implements the parser. On integration, an empty file must show
+the empty state and a malformed file must show an error. If an interface decision
+is still open or either check is unclear, settle the decision, redraw the task
+or implement it directly. A substantial standalone assignment can justify waiting
+for a worker when its acceptance check is clear. Handle small fixes directly when
+the fix is evident.
+
+Run the active shell-free test plan on the official product tree with
+`run-tests --attempt-id <unique-id>` before requesting implementation `PASSED`.
+The command writes immutable evidence under
+`30_execution/test_attempts/<attempt-id>/test_results.json` and updates the
+canonical `30_execution/test_results.json` with the attempt identity and hash.
+Use a fresh attempt ID for each run. The control plane checks recorded passing
+evidence when recording implementation `PASSED` and when advancing from that pass
+into verification. Keep implementation current through candidate packaging,
+inspection and `prepare-verification`.
+
+Create and inspect the contract-bound candidate archive with `package --inspect`
+before invoking the verifier. Review both steps in the returned result and use
+`inspect-package` for reinspection of an existing candidate. Keep the release stage `PENDING`
+while the archive, manifest and passing inspection serve as candidate evidence.
+Packaging invalidates prior inspection. Regenerate and reinspect the candidate
+whenever attributable source, tests, package specification or contract approval
+binding changes.
 
 ### Verification
 
@@ -309,9 +348,27 @@ After implementation, tests, candidate packaging, and package inspection pass, r
 
 At this pre-verifier boundary, a null current verification report is the normal state because the independent verifier has not produced its judgment yet. Require and protect the active build request, product contract, run state, source, manifest, inspection, and archive; protect the required problem frame on the prepared path. Direct B has no frame to manufacture. If an already active verification report exists during a later attempt, protect its exact identity too; a malformed non-null report entry still fails closed.
 
-Then enter verification as `IN_PROGRESS`, start the `independent_verifier` role boundary, and invoke the exact custom role. Give it the harness attempt and cleanup evidence, active contract, immutable source and archive identities, test evidence, release manifest, package inspection, documentation, and prior repair evidence. Require it to use the independent-verification workflow and explicitly named [verification-adapter.md](references/verification-adapter.md); its legacy probe allowance is 40_verification/probes/**; selected "1.1" artifact calls use only the exact assigned report file plus their own 40_verification/probes/<audit-id>/ directory. Symlink/junction escape is a boundary violation.
+After the harness passes, enter verification as `IN_PROGRESS` to open the
+report-registration window. Start the `independent_verifier` role boundary and
+invoke the exact custom role. Give it the harness attempt and cleanup evidence,
+active contract, immutable source and archive identities, test evidence, release
+manifest, package inspection, documentation, and prior repair evidence. Require
+it to use the independent-verification workflow and explicitly named
+[verification-adapter.md](references/verification-adapter.md). The legacy probe
+allowance is `40_verification/probes/**`. Selected `1.1` and `1.2` artifact calls
+use only the exact assigned report file and their own
+`40_verification/probes/<audit-id>/` directory. Symlink or junction escape is a
+boundary violation.
 
-Finalize the verifier-owned report through `finalize-semantic-return`. Have Root preserve `READY`, `NOT_READY`, `UNVERIFIED`, and requirement-level results exactly; activate its hash-bound run-state reference and pass `validate-run`; only then set the in-progress verification stage to `PASSED`, `FAILED`, or `BLOCKED` according to that report. Verification PASS captures both the report identity and exact contract/manifest/inspection/archive candidate binding used for release reconciliation and future revision eligibility. A terminal verification state may never have a null or missing active report. A polished summary or harness PASS never substitutes for a complete report.
+Finalize the verifier-owned report through `finalize-semantic-return` to activate
+its hash-bound run-state reference unchanged. After `validate-run`, record the
+terminal result with `update-state --to-stage verification --from-verifier`. The
+control plane maps `READY` with complete `PASS` coverage to `PASSED`, `NOT_READY`
+to `FAILED`, and `UNVERIFIED` to `BLOCKED` for both the stage and gate. Root uses
+the recorded result to decide what evidence to acquire or implementation to
+repair. Verification PASS captures both the report identity and the exact
+contract/manifest/inspection/archive candidate binding used for release
+reconciliation and future revision eligibility.
 
 ### Repair
 

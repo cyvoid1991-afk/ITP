@@ -21,7 +21,7 @@ from .io_utils import (
 )
 from .result import CommandResult
 from .rounds import (
-    assert_current_subject, assert_unmodified_before_round, capture_verification_result, complete_verification,
+    TERMINAL, assert_current_subject, assert_unmodified_before_round, capture_verification_result, complete_verification,
     evidence_recovery_event, modification_event, reserve_round,
 )
 from .mutation_guard import run_mutation_diagnostics, run_forward_diagnostics
@@ -29,6 +29,7 @@ from .workflow import entry_context, validate_contract_sources, validate_run_sta
 from .validation import (
     STAGE_IDS,
     STAGE_STATUSES,
+    active_verification_status,
     is_agent_artifact_run,
     validate_run_directory,
     validate_semantic_prerequisites,
@@ -449,15 +450,19 @@ def update_state(
     *,
     project_root: Path | None = None,
     to_stage: str,
-    stage_status: str,
-    gate_status: str,
+    stage_status: str | None = None,
+    gate_status: str | None = None,
     evidence_refs: list[str],
     rationale: str,
     next_action: str,
     timestamp: str | None = None,
     failure_ref: str | None = None,
+    from_verifier: bool = False,
 ) -> CommandResult:
     result = CommandResult(command="update-state")
+    if from_verifier and (to_stage != "verification" or stage_status is not None or gate_status is not None):
+        result.add("VERIFIER_MODE", "from_verifier", "requires the verification stage and no explicit statuses")
+        return result
     # Repair entry may reserve the round needed to replace stale owner work.
     # All normal transition/round checks below still apply before mutation.
     if to_stage == "repair" and stage_status == gate_status == "IN_PROGRESS":
@@ -485,9 +490,9 @@ def update_state(
         return result
     if to_stage not in STAGE_IDS:
         result.add("STAGE_ID", "to_stage", f"must be one of {STAGE_IDS}")
-    if stage_status not in STAGE_STATUSES:
+    if not from_verifier and stage_status not in STAGE_STATUSES:
         result.add("STAGE_STATUS", "stage_status", f"must be one of {sorted(STAGE_STATUSES)}")
-    if gate_status not in STAGE_STATUSES:
+    if not from_verifier and gate_status not in STAGE_STATUSES:
         result.add("GATE_STATUS", "gate_status", f"must be one of {sorted(STAGE_STATUSES)}")
     if not rationale.strip():
         result.add("RATIONALE_REQUIRED", "rationale", "must be non-empty")
@@ -499,6 +504,22 @@ def update_state(
         result.add("GATE_MISMATCH", "stage_status", "a PASSED gate requires a PASSED stage")
     if stage_status in {"FAILED", "BLOCKED"} and gate_status != stage_status:
         result.add("GATE_MISMATCH", "gate_status", f"a {stage_status} stage requires a {stage_status} gate")
+    if to_stage == "verification" and gate_status in {"FAILED", "BLOCKED"} and stage_status not in TERMINAL:
+        result.add("GATE_MISMATCH", "stage_status", f"a {gate_status} verification gate requires a {gate_status} stage")
+    if not result.ok:
+        return result
+
+    terminal_verification = to_stage == "verification" and (from_verifier or stage_status in TERMINAL)
+    if terminal_verification:
+        verifier_status, diagnostics = active_verification_status(effective_root, run_dir, raw)
+        result.extend(diagnostics)
+        if not result.ok:
+            return result
+        if from_verifier:
+            stage_status = gate_status = verifier_status
+        elif stage_status != verifier_status:
+            result.add("VERIFICATION_VERDICT", "stage_status",
+                       f"the active verifier report requires {verifier_status}; requested {stage_status}")
     if gate_status == "PASSED" and not evidence_refs:
         result.add("GATE_EVIDENCE", "evidence_refs", "a PASSED gate requires at least one evidence reference")
     if not result.ok:
@@ -532,7 +553,7 @@ def update_state(
             result.add("ROUND_START", "repair", str(exc))
             return result
     terminal_snapshot = None
-    if selected and to_stage == "verification" and stage_status in {"PASSED", "FAILED", "BLOCKED"}:
+    if selected and terminal_verification:
         try:
             latest = raw["control"].get("latest_verification_result")
             active = raw.get("active_artifacts", {}).get("verification_report")
@@ -649,17 +670,13 @@ def update_state(
     ):
         result.extend(validate_contract_sources(effective_root, run_dir, raw))
 
-    if to_stage == "verification" and stage_status in {"PASSED", "FAILED", "BLOCKED"}:
-        active = raw.get("active_artifacts")
-        report_entry = active.get("verification_report") if isinstance(active, dict) else None
-        if report_entry is None:
-            result.add(
-                "ACTIVE_ARTIFACT",
-                "$.active_artifacts.verification_report",
-                f"required before verification can become {stage_status}",
-            )
-        else:
-            result.extend(validate_run_directory(effective_root, run_dir).diagnostics)
+    if terminal_verification:
+        active = raw["active_artifacts"]
+        report_entry = active["verification_report"]
+        if active.get("product_contract") is None:
+            result.add("ACTIVE_ARTIFACT", "$.active_artifacts.product_contract",
+                       "a registered product contract is required to check verification coverage")
+        result.extend(validate_run_directory(effective_root, run_dir).diagnostics)
         if stage_status == "PASSED" and isinstance(report_entry, dict):
             from .validation import validate_revalidation_candidate
 
@@ -677,18 +694,24 @@ def update_state(
     if stage_status == "PASSED" and _pending_approvals(raw):
         result.add("PENDING_APPROVAL", "required_approvals", f"cannot pass a gate with pending approvals: {_pending_approvals(raw)}")
 
-    if to_stage == "release":
-        result.extend(validate_verification_reconciliation(effective_root, run_dir, raw))
-        verification = stages.get("verification", {})
-        verification_gate = gates.get(verification.get("gate_id"), {})
-        if verification.get("status") != "PASSED" or verification_gate.get("status") != "PASSED":
-            result.add("RELEASE_PRECONDITION", "stages.verification", "verification and its gate must be PASSED before release")
+    if (
+        to_stage == "release"
+        or (to_stage == "implementation" and stage_status == "PASSED")
+        or (current_stage == "implementation" and to_stage == "verification" and current.get("status") == "PASSED")
+    ):
         tests_ok, tests_message, _ = passing_test_results(
             run_dir / "30_execution" / "test_results.json",
             effective_root,
         )
         if not tests_ok:
             result.add("TESTS_NOT_PASSING", "30_execution/test_results.json", tests_message)
+
+    if to_stage == "release":
+        result.extend(validate_verification_reconciliation(effective_root, run_dir, raw))
+        verification = stages.get("verification", {})
+        verification_gate = gates.get(verification.get("gate_id"), {})
+        if verification.get("status") != "PASSED" or verification_gate.get("status") != "PASSED":
+            result.add("RELEASE_PRECONDITION", "stages.verification", "verification and its gate must be PASSED before release")
         if stage_status == "PASSED":
             required_passed = ["intake", "framing", "contract", "repository_analysis", "implementation", "verification"]
             if direct:

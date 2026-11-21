@@ -351,11 +351,13 @@ def create_package(project_root: Path, run_dir: Path, spec_path: Path) -> Comman
         result.add("INSPECTION_INVALIDATION", str(inspection_path), f"cannot invalidate prior inspection: {exc}")
         return result
 
-    archive_path.parent.mkdir(parents=True, exist_ok=True)
-    handle = tempfile.NamedTemporaryFile(dir=archive_path.parent, prefix=f".{archive_path.name}.", suffix=".tmp", delete=False)
-    archive_temp = Path(handle.name)
-    handle.close()
+    archive_temp = None
     try:
+        archive_path.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.NamedTemporaryFile(
+            dir=archive_path.parent, prefix=f".{archive_path.name}.", suffix=".tmp", delete=False
+        ) as handle:
+            archive_temp = Path(handle.name)
         _write_deterministic_zip(archive_temp, source_root, spec["artifact_root"], files)
         archive_hash = sha256_file(archive_temp)
         entries = [
@@ -382,7 +384,8 @@ def create_package(project_root: Path, run_dir: Path, spec_path: Path) -> Comman
         os.replace(archive_temp, archive_path)
         atomic_write_json(manifest_path, manifest)
     except (OSError, ValueError, zipfile.BadZipFile) as exc:
-        archive_temp.unlink(missing_ok=True)
+        if archive_temp is not None:
+            archive_temp.unlink(missing_ok=True)
         result.add("PACKAGE_WRITE", str(archive_path), str(exc))
         return result
     result.data = {
@@ -393,6 +396,27 @@ def create_package(project_root: Path, run_dir: Path, spec_path: Path) -> Comman
         "entry_count": len(entries),
         "inspection_status": "PENDING",
     }
+    return result
+
+
+def create_and_inspect_package(project_root: Path, run_dir: Path, spec_path: Path) -> CommandResult:
+    """Create a candidate and run the standalone inspector on its manifest."""
+
+    result = create_package(project_root, run_dir, spec_path)
+    completed_steps: list[str] = []
+    result.data.update(completed_steps=completed_steps, failed_step=None, inspection=None)
+    if not result.ok:
+        result.data.update(status="FAIL", failed_step="package")
+        return result
+
+    completed_steps.append("package")
+    inspection = inspect_package(project_root, run_dir, Path(result.data["manifest_path"]))
+    result.extend(inspection.diagnostics)
+    result.data.update(inspection=inspection.as_dict(), inspection_status="PASS" if inspection.ok else "FAIL")
+    if inspection.ok:
+        completed_steps.append("inspect-package")
+    else:
+        result.data.update(status="FAIL", failed_step="inspect-package")
     return result
 
 

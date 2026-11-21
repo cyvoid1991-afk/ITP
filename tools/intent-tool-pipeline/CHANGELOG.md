@@ -1,5 +1,62 @@
 # Changelog
 
+## ITP-20261121-VERIFICATION-STATE - 2026-11-21 - Derive verification state from the active report
+
+- A recorded terminal state could conflict with the Verifier's report.
+  `update-state --to-stage verification --from-verifier` reads the active
+  report and sets the stage and gate together. Explicit terminal requests
+  must match the report under the shared Python transition as well.
+- Existing controls still check report identity, coverage, candidate evidence,
+  round counts and replay. A historical mismatch remains recorded. A conflicting
+  terminal request cannot change that history. For bound control 1.2 runs,
+  retain the compatible installation for recovery and issue fresh assignments
+  for changed procedures before forward use.
+
+## ITP-20261121-CANDIDATE-INSPECTION - 2026-11-21 - Inspect the generated candidate in the package command
+
+- `package --inspect` passes the generated manifest to the existing inspector.
+  The combined result identifies completed steps and any failing step.
+  Creation invalidates the previous inspection before replacing a candidate.
+  Standalone commands remain available for creation and for reinspection of
+  the same archive. Independent verification and release follow their own gates.
+- Tests compare archive, manifest and inspection evidence with standalone
+  execution and cover inspection failure, interruption and retry.
+
+## ITP-20261121-STAGE-OWNERSHIP - 2026-11-21 - Enforce implementation evidence and assign owner responsibilities
+
+- The implementation gate and subsequent advancement into verification check
+  the canonical passing test evidence and its plan binding. Root owns the
+  test plan and integrated checks. The same conditions apply to prepared
+  and Direct B intake.
+- Realizer and Contractor resolve source-settled omissions and hand outstanding
+  questions to Root with the evidence and consequences. Root resolves outstanding
+  questions within delegated authority. A user-reserved material choice goes
+  to the user, and the specialist updates its own artifact.
+- Root may assign bounded implementation changes in isolated workspaces. For
+  parallel work Root identifies an independent task and an observable integration
+  check. Root owns changes to the official tree. An isolated live worker trial
+  passed integrated empty, malformed and valid parser inputs. Specialist routing
+  was checked through policy tests and scenario review.
+- Verification across the five approved changes on 2026-11-21: 704 passed,
+  7 skipped and 1 failed. The public-seed rebuild rejected the current tree
+  against its historical provenance. The same test and diagnostic reproduced
+  on pre-change commit `b363cfa`. The inventory build, extraction and
+  document-link checks passed. The suite used simulated specialist returns.
+
+## ITP-20261121-VERDICT - 2026-11-21 - Read Markdown verdicts from their declared fields
+
+- A passing word in a rationale or evidence cell could advance a held result.
+  Brief and report admission now require one leading status declaration.
+  Requirement verdicts come from the named Status or historical Result column.
+  A gate that requires an active artifact rejects an empty reference.
+- Existing template and example formats remain readable. Previously ambiguous
+  artifacts require a corrected owner submission for forward use. Control 1.2
+  binds the changed procedures, so retain the prior installation for recovery
+  and issue fresh assignments under the updated procedures.
+- The two control and workflow test modules passed all 106 cases. CLI startup
+  and the shipped template and example verdicts were also checked. The original
+  public-seed rebuild check fails on the pre-change revision as well.
+
 ## DELEGATION-20261117-GPT62 - 2026-11-17 - Upgrade worker and custom agent models
 
 - Align the pipeline worker rule with the shared policy by using

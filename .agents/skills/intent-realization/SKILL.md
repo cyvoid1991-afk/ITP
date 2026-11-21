@@ -85,10 +85,14 @@ proposal. Respect the runtime read/write boundary; ask Root to execute probes if
 the role is read-only. A proposed default needs applicability, result/resource
 impact, override/failure behavior and evidence appropriate to its risk.
 
-Resolve ordinary choices within delegated authority and record the basis. Do not
-escalate every default. Do not invent user preferences, acceptable error, physical
-boundary conditions, or a new scope to avoid asking. Root first checks existing
-intent and authorization, then obtains only the material missing decision.
+Resolve ordinary choices within delegated authority and record the basis. When
+the supplied evidence settles a condition or omission, correct the brief and
+cite that evidence. For an outstanding issue, return to Root the exact question,
+sources checked, practical differences between plausible answers, and a
+recommendation when supported. Root checks original intent, prior decisions,
+implementation context and existing delegation. Root obtains a user decision
+when the remaining material choice is reserved to the user. Incorporate the
+answer into the brief and reassess readiness.
 
 When the remaining question needs a new objective or open-ended model research,
 return the exact unresolved decision and useful work already completed. Missing
@@ -175,7 +179,7 @@ non-changes, accumulated source deltas, compatibility/migration and whole-produc
 regression needs. An ineligible baseline or broad/incompatible/ambiguous delta
 requires `FRESH_REQUIRED`; never silently substitute or refresh it.
 
-Record material bounce-backs and Root answers through the existing pipeline
+Record material bounce-backs and the resolution through the existing pipeline
 mechanism. Clarification is not automatically a repair attempt; preserve the
 control plane's repair-entry rules: legacy control keeps two attempts; selected
 control "1.1" uses the four-round ledger and separately reviewed, explicitly
@@ -202,6 +206,8 @@ answers attributable and understandable without hidden chat history.
   Legacy calls retain Root-supplied version/path. Do not invent identities.
 - For selected output, return actual path, artifact ID/version, final SHA-256,
   invocation, readiness, inputs read, unresolved decisions and evidence references.
+  Keep the question details in the brief's existing Decisions section and cite
+  the relevant decision in the compact return.
   Root finalizes those same bytes with --expected-source-sha256 and consumes the
   registered brief. Do not return the body for transcription or claim activation.
   Keep full-body return for legacy governed use, including BLOCKED output.

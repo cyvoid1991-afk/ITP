@@ -283,6 +283,8 @@ This is structural validation. It cannot decide whether prose captures the user'
 
 The command validates the existing state, checks the transition, updates the target stage and gate, increments the run-state artifact version, sets `updated_at`, and atomically replaces `run_state.json`. If any check fails, the state file is unchanged.
 
+For a registered verifier report, use `--to-stage verification --from-verifier` with the regular run, rationale, next action and evidence arguments. Omit both explicit status flags. The shared transition checks map READY with complete all-PASS coverage to PASSED, NOT_READY to FAILED, and UNVERIFIED to BLOCKED. An explicit terminal request must match the same verdict. Selected-control replay uses the existing round and receipt rules. A historical snapshot that disagrees with its report remains readable. A terminal replay of that conflict is rejected and leaves the snapshot untouched.
+
 Normal progression is:
 
 ```text
@@ -292,7 +294,7 @@ intake -> framing -> contract -> repository_analysis -> implementation -> verifi
 
 Important controls:
 
-- Normal advancement requires the current stage and gate to be `PASSED`.
+- Normal advancement requires the current stage and gate to be `PASSED`. Completing implementation and advancing from implementation to verification require passing canonical test evidence bound to the test plan.
 - A semantic stage cannot be recorded as `PASSED`, or used as an advancement prerequisite, unless its owning artifact carries the required machine-readable readiness result: intake handoff `PASS`, framing completion `PASS`, contract readiness `PASS`, or verification overall `READY`.
 - These checks enforce the declared result; deciding whether the supporting prose deserves that result remains semantic work.
 - Under legacy control, `verification -> repair` requires verification `FAILED` or `BLOCKED`, `--failure-ref`, and an available repair attempt; entering repair increments `active_attempt`. Selected control also permits a prior PASS before completed release on an attributable authorized modification request, reserving one round as described above.
@@ -463,7 +465,7 @@ Each execution first writes an immutable `30_execution/test_attempts/<attempt-id
 
 Packaging requires default-path test results with status `PASS`. It selects only files matched by the explicit include list, removes prohibited files, confirms every required file, writes one fixed archive root, normalizes ZIP timestamps and permissions, sorts entries, computes per-file and archive SHA-256 values, and writes the release manifest.
 
-After creating or replacing the archive, it writes `package_inspection.json` with `PENDING`. This prevents a prior inspection from authorizing a newly packaged archive.
+Before replacing the archive, creation marks `package_inspection.json` PENDING. For a single invocation use `package --inspect` with the same run and spec arguments. The inspector consumes the generated manifest path and writes its standard inspection evidence. The combined JSON includes the creation data, `completed_steps`, `failed_step` and the nested `inspection` command result. Both operations must succeed for a passing result. An interrupted or failed inspection leaves the candidate available for standalone reinspection. Rebuild and reinspect after a candidate change. Release authorization remains a later transition.
 
 Package-spec fields:
 

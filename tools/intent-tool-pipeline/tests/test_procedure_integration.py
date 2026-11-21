@@ -22,3 +22,7 @@ def test_bound_multiple_items_contract_revisit_and_resume_share_round(root, full
 
 def test_bound_fourth_pass_and_fifth_stop(root, full_lifecycle):
     rounds.test_fourth_pass_is_allowed_and_fifth_modification_is_atomic_stop(root)
+
+
+def test_bound_report_derived_terminal_transition_and_replay(root, full_lifecycle, capsys):
+    rounds.test_verifier_cli_records_and_replays_report_derived_status(root, capsys, "BLOCKED")

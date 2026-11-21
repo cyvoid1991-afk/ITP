@@ -109,7 +109,7 @@ def test_skill_contract_and_repository_route_are_complete() -> None:
     command_order = (
         "pipeline_ops.py --format json run-tests",
         "pipeline_ops.py --format json package",
-        "pipeline_ops.py --format json inspect-package",
+        "--spec <package-spec-path> `\n  --inspect",
         "pipeline_ops.py --format json prepare-verification",
         "invoke `independent_verifier`",
     )
@@ -118,6 +118,7 @@ def test_skill_contract_and_repository_route_are_complete() -> None:
     assert gate_map.index("pipeline_ops.py --format json role-boundary start") < gate_map.index(
         "pipeline_ops.py --format json finalize-semantic-return"
     )
+    assert "--to-stage verification --from-verifier" in gate_map
     assert "pre-verification candidate evidence" in gate_map
     assert "without rebuilding the archive" in gate_map
     assert "release stage `PENDING`" in skill

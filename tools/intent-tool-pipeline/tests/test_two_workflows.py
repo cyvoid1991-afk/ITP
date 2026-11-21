@@ -23,7 +23,12 @@ from pipeline_control.validation import validate_run_directory, validate_run_sta
 from pipeline_control.workflow import validate_contract_sources, validate_run_state_context
 from test_build_tool_pipeline_skill import INITIALIZER, _request
 from test_semantic_finalize import _contract, _problem_frame
-from test_pipeline_control import _contract as _package_contract, _verification_report, _write_package_fixture_assets
+from test_pipeline_control import (
+    _contract as _package_contract,
+    _verification_report,
+    _write_package_fixture_assets,
+    _write_test_plan,
+)
 from test_verifier_harness import _commands, _write_plan
 
 
@@ -115,6 +120,70 @@ def test_intake_paths_preserve_contract_gate_and_semantic_owner(tmp_path: Path, 
         assert next(s for s in state["stages"] if s["id"] == "framing")["status"] == "PENDING"
 
 
+@pytest.mark.parametrize(
+    ("completion", "valid"),
+    [
+        ("PASS requires an adequate evidence basis.\n\nBLOCKED — Evidence is missing.", False),
+        ("PASS — Evidence is complete.\n\nBLOCKED — Evidence is missing.", False),
+        ("BLOCKED — Evidence is missing.\n\n`BLOCKED` — Evidence is missing.", False),
+        ("BLOCKED — Evidence is missing.\n\n## Completion Status\n\nPASS", False),
+        ("`BLOCKED` — The evidence needed to record PASS is missing.", True),
+    ],
+    ids=["prose", "contradictory", "duplicate", "duplicate-section", "blocked"],
+)
+def test_framing_verdict_cannot_be_overridden_by_pass_text(
+    tmp_path: Path, completion: str, valid: bool,
+) -> None:
+    run = _new(tmp_path, direct=False)
+    assert _step(tmp_path, run, "intake").ok
+    assert _step(tmp_path, run, "framing", "IN_PROGRESS").ok
+    state_path = run / "30_execution/run_state.json"
+    before = state_path.read_bytes()
+    frame = _problem_frame(owner="intent_realizer").replace("PASS — ready for contract authoring.", completion)
+    registration = _activate(tmp_path, run, "problem_frame", frame, "a1")
+    assert registration.ok == valid, registration.as_dict()
+    if valid:
+        assert _step(tmp_path, run, "framing", "BLOCKED").ok
+    else:
+        assert "FRAME_READINESS" in {d.code for d in registration.diagnostics}
+        assert state_path.read_bytes() == before
+        assert _state(run)["active_artifacts"]["problem_frame"] is None
+
+    before = state_path.read_bytes()
+    passed = _step(tmp_path, run, "framing")
+    assert not passed.ok, passed.as_dict()
+    assert not _step(tmp_path, run, "contract", "IN_PROGRESS").ok
+    assert state_path.read_bytes() == before
+
+
+def test_legacy_active_frame_is_checked_again_before_advancement(tmp_path: Path) -> None:
+    run = _new(tmp_path, direct=False)
+    assert _step(tmp_path, run, "intake").ok
+    frame = _problem_frame(owner="intent_realizer")
+    assert _activate(tmp_path, run, "problem_frame", frame, "a1").ok
+    assert _step(tmp_path, run, "framing").ok
+
+    # Simulate bytes and a recorded identity that an older parser could accept.
+    frame_path = run / "10_framing/problem_frame.md"
+    frame_path.write_text(
+        frame.replace(
+            "PASS — ready for contract authoring.",
+            "Only an adequate evidence basis receives PASS.\n\nBLOCKED — Evidence is missing.",
+        ),
+        encoding="utf-8",
+    )
+    state = _state(run)
+    state["active_artifacts"]["problem_frame"]["content_sha256"] = sha256_file(frame_path)
+    state_path = run / "30_execution/run_state.json"
+    state_path.write_text(json.dumps(state), encoding="utf-8")
+    before = state_path.read_bytes()
+
+    result = _step(tmp_path, run, "contract", "IN_PROGRESS")
+    assert not result.ok, result.as_dict()
+    assert "STAGE_READINESS" in {d.code for d in result.diagnostics}
+    assert state_path.read_bytes() == before
+
+
 def test_route_tampering_and_fabricated_framing_fail_without_mutation(tmp_path: Path) -> None:
     run = _new(tmp_path, direct=False)
     request_path = run / "00_intake/build_request.yaml"
@@ -184,7 +253,7 @@ def test_declared_handoff_snapshot_drift_is_not_current(tmp_path: Path) -> None:
     assert "HANDOFF_SOURCE_IDENTITY" in {d.code for d in validate_contract_sources(tmp_path, run, state, contract)}
 
 
-def _verified(root: Path, *, direct: bool, source_snapshot: bool = False) -> Path:
+def _at_implementation(root: Path, *, direct: bool, source_snapshot: bool = False) -> Path:
     run = _new(root, direct=direct, source_snapshot=source_snapshot)
     assert _step(root, run, "intake").ok
     if not direct:
@@ -197,6 +266,50 @@ def _verified(root: Path, *, direct: bool, source_snapshot: bool = False) -> Pat
     for stage in ("contract", "repository_analysis"):
         assert _step(root, run, stage).ok
     assert _step(root, run, "implementation", "IN_PROGRESS").ok
+    return run
+
+
+@pytest.mark.parametrize("direct", [False, True], ids=["prepared", "direct"])
+@pytest.mark.parametrize("target", ["implementation", "verification"])
+@pytest.mark.parametrize(
+    ("defect", "message"),
+    [("missing", "evidence file is missing"), ("failed", "status must be PASS"), ("changed", "test plan changed")],
+)
+def test_implementation_gate_requires_current_passing_evidence(
+    tmp_path: Path, direct: bool, target: str, defect: str, message: str,
+) -> None:
+    run = _at_implementation(tmp_path, direct=direct)
+    evidence_path = run / "30_execution/test_results.json"
+    if target == "verification" or defect == "changed":
+        plan = _write_test_plan(tmp_path)
+        assert run_test_plan(tmp_path, run, plan, attempt_id="original").ok
+    if target == "verification":
+        assert _step(tmp_path, run, "implementation").ok
+
+    if defect == "missing" and evidence_path.is_file():
+        evidence_path.unlink()
+    elif defect == "failed":
+        failing = run_test_plan(tmp_path, run, _write_test_plan(tmp_path, 1), attempt_id="failed")
+        assert not failing.ok
+        assert json.loads(evidence_path.read_bytes())["status"] == "FAIL"
+    elif defect == "changed":
+        plan.write_bytes(plan.read_bytes() + b"\n")
+
+    status = "PASSED" if target == "implementation" else "IN_PROGRESS"
+    state_path = run / "30_execution/run_state.json"
+    before = state_path.read_bytes()
+    rejected = _step(tmp_path, run, target, status)
+    assert not rejected.ok, rejected.as_dict()
+    assert any(d.code == "TESTS_NOT_PASSING" and message in d.message for d in rejected.diagnostics), rejected.as_dict()
+    assert state_path.read_bytes() == before
+
+    assert run_test_plan(tmp_path, run, _write_test_plan(tmp_path), attempt_id="passing").ok
+    passed = _step(tmp_path, run, target, status)
+    assert passed.ok, passed.as_dict()
+
+
+def _at_verification(root: Path, *, direct: bool, source_snapshot: bool = False) -> Path:
+    run = _at_implementation(root, direct=direct, source_snapshot=source_snapshot)
     spec_path = _write_package_fixture_assets(root)
     package_spec = yaml.safe_load(spec_path.read_text(encoding="utf-8"))
     package_spec["manifest_path"] = (run / "50_release/release_manifest.json").relative_to(root).as_posix()
@@ -236,11 +349,99 @@ def _verified(root: Path, *, direct: bool, source_snapshot: bool = False) -> Pat
     assert harness.data["extraction_count"] == 1
     assert harness.data["cleanup_status"] == "PASS"
     assert _step(root, run, "verification", "IN_PROGRESS").ok
+    return run
+
+
+def _verified(root: Path, *, direct: bool, source_snapshot: bool = False) -> Path:
+    run = _at_verification(root, direct=direct, source_snapshot=source_snapshot)
     verdict = _activate(root, run, "verification_report", _verification_report(), "iv1")
     assert verdict.ok, verdict.as_dict()
     result = _step(root, run, "verification")
     assert result.ok, result.as_dict()
     return run
+
+
+@pytest.mark.parametrize("deceptive_field", ["assessment", "requirement-status"])
+def test_verification_prose_and_evidence_cannot_supply_passing_verdict(
+    tmp_path: Path, deceptive_field: str,
+) -> None:
+    run = _at_verification(tmp_path, direct=True)
+    state_path = run / "30_execution/run_state.json"
+    before = state_path.read_bytes()
+    report = _verification_report()
+    if deceptive_field == "assessment":
+        report = report.replace(
+            "READY — All applicable requirements pass.",
+            "READY requires a completed review.\n\nNOT_READY — The review is incomplete.",
+        )
+        code = "VERIFICATION_OVERALL"
+    else:
+        report = report.replace("| Result |", "| Status |").replace(
+            "| PASS | Stable captured output. |", "| UNKNOWN | PASS |",
+        )
+        code = "VERIFICATION_RESULT"
+    registration = _activate(tmp_path, run, "verification_report", report, "iv1")
+    assert not registration.ok and code in {d.code for d in registration.diagnostics}, registration.as_dict()
+    assert _state(run)["active_artifacts"]["verification_report"] is None
+    assert not _step(tmp_path, run, "verification").ok
+    assert not _step(tmp_path, run, "release", "IN_PROGRESS").ok
+    assert state_path.read_bytes() == before
+
+
+@pytest.mark.parametrize(
+    ("original", "replacement", "code"),
+    [
+        ("READY — All applicable requirements pass.", "READY\n\nNOT_READY", "VERIFICATION_OVERALL"),
+        ("| REQ-001 |", "| REQ-999 |", "VERIFICATION_COVERAGE"),
+    ],
+    ids=["ambiguous", "missing-coverage"],
+)
+def test_report_derived_transition_rechecks_retained_verification(
+    tmp_path: Path, original: str, replacement: str, code: str,
+) -> None:
+    run = _at_verification(tmp_path, direct=True)
+    report = _verification_report()
+    assert _activate(tmp_path, run, "verification_report", report, "iv1").ok
+    # Recreate a retained report whose recorded identity matches the bytes.
+    report_path = run / "40_verification/verification_report.md"
+    report_path.write_text(report.replace(original, replacement), encoding="utf-8")
+    state = _state(run)
+    state["active_artifacts"]["verification_report"]["content_sha256"] = sha256_file(report_path)
+    state_path = run / "30_execution/run_state.json"
+    state_path.write_text(json.dumps(state), encoding="utf-8")
+    before = state_path.read_bytes()
+
+    result = update_state(
+        run, project_root=tmp_path, to_stage="verification", from_verifier=True, evidence_refs=["fixture"],
+        rationale="Recorded the verifier result.", next_action="Review the outcome.",
+    )
+    assert not result.ok and code in {d.code for d in result.diagnostics}, result.as_dict()
+    assert state_path.read_bytes() == before
+
+
+@pytest.mark.parametrize(
+    ("overall", "requirement_status", "terminal"),
+    [("NOT_READY", "FAIL", "FAILED"), ("UNVERIFIED", "UNVERIFIED", "BLOCKED")],
+)
+def test_valid_non_ready_verification_registers_without_enabling_release(
+    tmp_path: Path, overall: str, requirement_status: str, terminal: str,
+) -> None:
+    run = _at_verification(tmp_path, direct=True)
+    report = _verification_report().replace(
+        "READY — All applicable requirements pass.",
+        f"`{overall}` — Evidence required for READY is missing.",
+    ).replace("| PASS |", f"| `{requirement_status}` |").replace(
+        "- Overall assessment: `READY`", f"- Overall assessment: `{overall}`",
+    )
+    registration = _activate(tmp_path, run, "verification_report", report, "iv1")
+    assert registration.ok, registration.as_dict()
+    assert _step(tmp_path, run, "verification", terminal).ok
+    state_path = run / "30_execution/run_state.json"
+    before = state_path.read_bytes()
+    passed = _step(tmp_path, run, "verification")
+    assert not passed.ok and "VERIFICATION_VERDICT" in {d.code for d in passed.diagnostics}, passed.as_dict()
+    assert not _step(tmp_path, run, "release", "IN_PROGRESS").ok
+    assert state_path.read_bytes() == before
 
 
 @pytest.mark.parametrize("direct", [False, True], ids=["prepared", "direct"])

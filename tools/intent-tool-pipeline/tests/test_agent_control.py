@@ -177,14 +177,26 @@ def test_all_run_writers_stop_before_side_effects(tmp_path, blocked_by):
         assert _snapshot(tmp_path) == before
 
 
-@pytest.mark.parametrize("stage,status", [("verification", "PASSED"), ("verification", "FAILED"), ("repair", "IN_PROGRESS"), ("release", "IN_PROGRESS")])
+@pytest.mark.parametrize(
+    "stage,status",
+    [
+        ("verification", "PASSED"), ("verification", "FAILED"), ("verification", "BLOCKED"),
+        ("repair", "IN_PROGRESS"), ("release", "IN_PROGRESS"),
+    ],
+)
 def test_selected_initial_state_cannot_skip_lifecycle_prerequisites(tmp_path, stage, status):
     _, run = _initialize(tmp_path)
     before = _snapshot(tmp_path)
     result = update_state(run, project_root=tmp_path, to_stage=stage, stage_status=status,
                           gate_status=status, evidence_refs=["test"], rationale="fixture", next_action="next")
     assert not result.ok, result.as_dict()
-    assert any(d.code in {"TRANSITION_NOT_ALLOWED", "ROUND_RESULT"} for d in result.diagnostics), result.as_dict()
+    if stage == "verification":
+        assert any(
+            d.code == "ACTIVE_ARTIFACT" and d.path == "$.active_artifacts.verification_report"
+            for d in result.diagnostics
+        ), result.as_dict()
+    else:
+        assert any(d.code == "TRANSITION_NOT_ALLOWED" for d in result.diagnostics), result.as_dict()
     assert all(d.code != "CONTROL_NOT_READY" for d in result.diagnostics), result.as_dict()
     assert _snapshot(tmp_path) == before
 

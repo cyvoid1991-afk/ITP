@@ -43,11 +43,12 @@ def passing_test_results(
         try:
             evidence_path = resolve_within(project_root, data["result_path"], must_exist=True)
             plan_path = resolve_within(project_root, data["plan_path"], must_exist=True)
-        except InputError as exc:
+            plan_sha256 = sha256_file(plan_path)
+        except (InputError, OSError) as exc:
             return False, str(exc), data
         if evidence_path.resolve() != path.resolve():
             return False, "persisted result_path does not identify this evidence file", data
-        if sha256_file(plan_path) != data["plan_sha256"]:
+        if plan_sha256 != data["plan_sha256"]:
             return False, "test plan changed after the retained execution", data
     return True, "", data
 
