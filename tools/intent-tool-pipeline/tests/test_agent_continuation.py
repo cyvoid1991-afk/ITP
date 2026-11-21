@@ -321,7 +321,7 @@ def test_threshold_review_after_fourth_evidence_recovery_binds_latest_without_re
     event = request_change(tmp_path, run, classification="EVIDENCE_GAP")
     resolve(tmp_path, run, event, basis="EVIDENCE_CHANGED")
     assert transition(tmp_path, run, "verification", source=original["report_ref"]).ok
-    report(tmp_path, run)
+    report(tmp_path, run, "BLOCKED")
     assert transition(tmp_path, run, "verification", "BLOCKED").ok
     _, event, resolution, started, _ = review_fixture(tmp_path, run=run)
     assert event["round_review_basis"]["source_report_ref"] == "verification-report@6"

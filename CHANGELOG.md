@@ -1,5 +1,29 @@
 # ITP public seed history
 
+## 2026-11-21 - ITP-20261121-STAGE-OWNERSHIP - Specialist questions and implementation delegation
+
+- Apply the approved Workflow A/B ownership revisions. Realizer and Contractor
+  correct source-resolved omissions in their own artifacts and give Root the
+  evidence, consequences and supported recommendation for outstanding questions.
+  Root resolves issues within existing authority and brings material user-reserved
+  choices to the user. The specialist records the resulting decision and reassesses
+  readiness using the existing artifact and bounce-back records.
+- During authorized Workflow B implementation, Root may delegate bounded changes
+  in isolated workspaces. For parallel work, Root identifies work it can complete
+  against the agreed interface and an observable integration check. Root owns
+  integration in the official product tree and runs the integrated tests before
+  requesting implementation PASS. The Verifier retains independent judgment.
+- Applies to the delegation policy, governed skills and common bounce-back
+  procedure. Control `1.2` uses the existing compatible recovery and fresh
+  assignment procedure for changed bound instructions.
+- The 39 delegation, role procedure and build skill tests passed. Scenario review
+  covered a source-resolved omission, recovered prior decision, and new user preference,
+  plus a parallel parser and UI change, unsettled interface, evident small fix,
+  and substantial standalone assignment. In an isolated worker trial, Root
+  completed the caller against the agreed interface, reviewed the parser change
+  and passed the integrated empty, malformed and valid input checks. A full
+  governed product run with live specialists was outside this fixture.
+
 ## 2026-11-17 - DELEGATION-20261117-GPT62 - Upgrade active agent models
 
 - Move the six active custom agents to `gpt-6.2-astra` or `gpt-6.2-sol`

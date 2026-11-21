@@ -99,6 +99,10 @@ materially improves speed or quality; Root owns integration and final validation
 - Preserve workflow write restrictions and reserve capacity for required roles.
   Do not parallelize writes to `run_state.json`, a semantic artifact, or the same
   product-tree paths. Root owns decomposition, conflict avoidance, and synthesis.
+- During authorized Workflow B implementation, follow the
+  [delegation policy](../../.agents/delegation-policy.md) for bounded worker
+  changes in isolated workspaces. Root applies accepted changes to the official
+  product tree and runs the integrated tests.
 - The custom semantic roles `intent_realizer`, `collaborative_intent_shaping_agent`,
   `product_contract_agent`, and `independent_verifier` must not spawn agents.
   Built-in workers and

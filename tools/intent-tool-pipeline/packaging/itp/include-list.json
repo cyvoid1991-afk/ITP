@@ -161,6 +161,7 @@
   "tools/intent-tool-pipeline/tests/test_build_tool_pipeline_skill.py",
   "tools/intent-tool-pipeline/tests/test_distribution.py",
   "tools/intent-tool-pipeline/tests/test_local_delivery.py",
+  "tools/intent-tool-pipeline/tests/test_package_inspection.py",
   "tools/intent-tool-pipeline/tests/test_pipeline_control.py",
   "tools/intent-tool-pipeline/tests/test_procedure_binding.py",
   "tools/intent-tool-pipeline/tests/test_procedure_integration.py",

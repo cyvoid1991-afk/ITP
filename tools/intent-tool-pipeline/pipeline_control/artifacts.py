@@ -35,6 +35,7 @@ from .validation import (
     markdown_metadata,
     parse_verification_results,
     semantic_artifact_owner,
+    validate_frame_declaration,
     validate_markdown_headings,
     validate_product_contract_data,
     validate_control_metadata,
@@ -98,7 +99,9 @@ def _validate_body(source_path: Path, artifact_key: str, payload: bytes, expecte
         version = metadata.get("version")
         artifact_id = metadata.get("artifact_id")
         semantic_owner = metadata.get("semantic_owner")
-        if artifact_key == "verification_report":
+        if artifact_key == "problem_frame":
+            diagnostics.extend(validate_frame_declaration(text, str(source_path)))
+        else:
             _, _, parsed = parse_verification_results(text)
             diagnostics.extend(parsed)
     if artifact_id != config["artifact_id"]:

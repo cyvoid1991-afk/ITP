@@ -1,8 +1,8 @@
 # Repository Delegation Policy
 
 Read this policy before delegating repository work. It preserves the execution
-limits formerly recorded in root [AGENTS.md](../AGENTS.md); moving them here
-does not expand delegation authority or start a pipeline workflow.
+limits formerly recorded in root [AGENTS.md](../AGENTS.md) and describes how
+Root may assign bounded implementation work during authorized Workflow B.
 
 ## Built-in Workers
 
@@ -16,6 +16,26 @@ does not expand delegation authority or start a pipeline workflow.
   Explain that the workspace is shared and other changes must be preserved.
 - Built-in workers and explorers follow the current runtime's delegation
   authority. This document does not override runtime restrictions.
+
+## Workflow B Implementation
+
+Root may delegate a bounded implementation change within the authorized work.
+Reserve capacity for the required semantic roles. Provide the relevant active
+contract, agreed interface, scope and expected behavior. Give the worker an
+isolated workspace and ask for a reviewable change, test commands and results.
+
+Before dispatching parallel work, name both a concrete task Root can finish
+while the worker is active using the agreed interface and a concrete integration
+check with its observable expected result. Resolve open shared decisions, narrow
+the assignment or implement it directly if either is unclear. A substantial
+standalone assignment with a clear acceptance test may justify waiting for a
+worker. An evident small fix usually favors direct implementation. Use these
+questions during ordinary assignment without adding an approval or gate.
+
+Root owns architecture decisions affecting multiple components, reviews the
+change, applies accepted work to the official product tree, and runs the
+integrated tests before requesting implementation PASS. Independent verification
+remains with the Verifier.
 
 ## Role and Workflow Boundaries
 

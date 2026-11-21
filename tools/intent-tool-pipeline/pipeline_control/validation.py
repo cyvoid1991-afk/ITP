@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from .evidence import passing_package_inspection, passing_test_results
-from .io_utils import InputError, normalize_repository_reference, read_structured, resolve_within, sha256_file
+from .io_utils import InputError, normalize_repository_reference, read_structured, resolve_within, sha256_bytes, sha256_file
 from .result import CommandResult, Diagnostic
 
 
@@ -17,7 +17,8 @@ LIFECYCLE_STATUSES = {"DRAFT", "ACTIVE", "SUPERSEDED"}
 READINESS_STATUSES = {"PASS", "PASS_WITH_ASSUMPTIONS", "BLOCKED"}
 STAGE_STATUSES = {"PENDING", "IN_PROGRESS", "PASSED", "FAILED", "BLOCKED"}
 REQUIREMENT_RESULTS = {"PASS", "FAIL", "UNVERIFIED"}
-OVERALL_RESULTS = {"READY", "NOT_READY", "UNVERIFIED"}
+VERIFICATION_STAGE_STATUSES = {"READY": "PASSED", "NOT_READY": "FAILED", "UNVERIFIED": "BLOCKED"}
+OVERALL_RESULTS = set(VERIFICATION_STAGE_STATUSES)
 CONTROL_REVISION = "1.0"
 SUPPORTED_BOUNDARY_REVISIONS = ("1.0", "1.1", "1.2")
 SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
@@ -1192,55 +1193,91 @@ def markdown_metadata(text: str) -> dict[str, Any]:
     }
 
 
-def parse_verification_results(text: str) -> tuple[str | None, dict[str, str], list[Diagnostic]]:
-    diagnostics: list[Diagnostic] = []
-    overall_match = re.search(
-        r"^##\s+Overall Assessment\s*$([\s\S]*?)(?=^##\s+|\Z)",
-        text,
-        flags=re.MULTILINE,
+def _unique_section(text: str, heading: str) -> str | None:
+    sections = re.findall(
+        rf"^##[ \t]+{re.escape(heading)}[ \t]*\r?$(.*?)(?=^##[ \t]+|\Z)",
+        text, flags=re.MULTILINE | re.DOTALL,
     )
-    overall = None
-    if overall_match:
-        token = re.search(r"\b(READY|NOT_READY|UNVERIFIED)\b", overall_match.group(1))
-        if token:
-            overall = token.group(1)
-    if overall not in OVERALL_RESULTS:
-        diagnostics.append(Diagnostic("VERIFICATION_OVERALL", "verification_report.md", "missing READY, NOT_READY, or UNVERIFIED overall assessment"))
+    return sections[0].strip() if len(sections) == 1 else None
 
-    section_match = re.search(
-        r"^##\s+Requirement Results\s*$([\s\S]*?)(?=^##\s+|\Z)",
-        text,
-        flags=re.MULTILINE,
-    )
-    results: dict[str, str] = {}
-    if section_match is None:
-        return overall, results, diagnostics
-    for line in section_match.group(1).splitlines():
-        if not line.lstrip().startswith("|"):
-            continue
-        cells = [cell.strip().replace("`", "") for cell in line.strip().strip("|").split("|")]
-        if not cells or re.fullmatch(r"REQ-\d{3,}", cells[0]) is None:
-            continue
-        result = next((cell for cell in cells[1:] if cell in REQUIREMENT_RESULTS), None)
-        if result is None:
-            diagnostics.append(Diagnostic("VERIFICATION_RESULT", f"verification_report.md:{cells[0]}", "row lacks PASS, FAIL, or UNVERIFIED"))
-            continue
-        if cells[0] in results:
-            diagnostics.append(Diagnostic("VERIFICATION_DUPLICATE", f"verification_report.md:{cells[0]}", "requirement appears more than once"))
-        results[cells[0]] = result
-    return overall, results, diagnostics
+
+def _declared_status(text: str, heading: str, allowed: set[str]) -> str | None:
+    section = _unique_section(text, heading)
+    if not section:
+        return None
+    declaration = re.compile(r"(`?)(?P<status>[A-Z_]+)\1(?:(?:\s*[—–:]|\s+-)\s+(?P<rationale>\S.*))?")
+    lines = section.splitlines()
+    first = declaration.fullmatch(lines[0].strip())
+    if first is None or first["status"] not in allowed:
+        return None
+    # A second declaration can also occupy the rationale slot on the same line.
+    for line in [first["rationale"] or "", *lines[1:]]:
+        other = declaration.fullmatch(line.strip())
+        if other and other["status"] in allowed:
+            return None
+    return first["status"]
 
 
 def parse_problem_frame_readiness(text: str) -> str | None:
-    section = re.search(
-        r"^##\s+Completion Status\s*$([\s\S]*?)(?=^##\s+|\Z)",
-        text,
-        flags=re.MULTILINE,
-    )
-    if section is None:
-        return None
-    match = re.search(r"\b(PASS_WITH_ASSUMPTIONS|PASS|BLOCKED)\b", section.group(1))
-    return match.group(1) if match else None
+    return _declared_status(text, "Completion Status", READINESS_STATUSES)
+
+
+def validate_frame_declaration(text: str, artifact_path: str) -> list[Diagnostic]:
+    if parse_problem_frame_readiness(text) is not None:
+        return []
+    return [Diagnostic(
+        "FRAME_READINESS", artifact_path,
+        "declare one PASS, PASS_WITH_ASSUMPTIONS, or BLOCKED on the first nonempty line of Completion Status",
+    )]
+
+
+def _table_cells(line: str) -> list[str]:
+    # Consume escaped pipes inside cells so evidence cannot shift the verdict column.
+    cells = re.findall(r"\|((?:\\.|[^\\|]|\\$)*)", line.strip())
+    if cells and not cells[-1] and line.rstrip().endswith("|"):
+        cells.pop()
+    return [cell.strip() for cell in cells]
+
+
+def _cell_value(cell: str) -> str:
+    if len(cell) >= 2 and cell.startswith("`") and cell.endswith("`"):
+        return cell[1:-1]
+    return cell
+
+
+def parse_verification_results(text: str) -> tuple[str | None, dict[str, str], list[Diagnostic]]:
+    diagnostics: list[Diagnostic] = []
+    overall = _declared_status(text, "Overall Assessment", OVERALL_RESULTS)
+    if overall is None:
+        diagnostics.append(Diagnostic("VERIFICATION_OVERALL", "verification_report.md",
+                                      "declare one READY, NOT_READY, or UNVERIFIED on the first nonempty line of Overall Assessment"))
+
+    section = _unique_section(text, "Requirement Results") or ""
+    rows = [_table_cells(line) for line in section.splitlines() if line.lstrip().startswith("|")]
+    results: dict[str, str] = {}
+    header = rows[0] if rows else []
+    columns = [i for i, label in enumerate(header) if label in {"Status", "Result"}]
+    if header[:1] != ["Requirement"] or len(columns) != 1:
+        diagnostics.append(Diagnostic("VERIFICATION_RESULT", "verification_report.md",
+                                      "Requirement Results needs one table with a Requirement column first and one Status or Result column"))
+        return overall, results, diagnostics
+    for cells in rows[1:]:
+        if cells and all(re.fullmatch(r":?-{3,}:?", cell) for cell in cells):
+            continue
+        if len(cells) != len(header) or not re.fullmatch(r"REQ-\d{3,}", _cell_value(cells[0])):
+            diagnostics.append(Diagnostic("VERIFICATION_RESULT", "verification_report.md",
+                                          "invalid requirement row or repeated header in Requirement Results"))
+            continue
+        identifier = _cell_value(cells[0])
+        result = _cell_value(cells[columns[0]])
+        if result not in REQUIREMENT_RESULTS:
+            diagnostics.append(Diagnostic("VERIFICATION_RESULT", f"verification_report.md:{identifier}",
+                                          "the declared status column must contain PASS, FAIL, or UNVERIFIED"))
+            continue
+        if identifier in results:
+            diagnostics.append(Diagnostic("VERIFICATION_DUPLICATE", f"verification_report.md:{identifier}", "requirement appears more than once"))
+        results[identifier] = result
+    return overall, results, diagnostics
 
 
 def _validate_active_identity(
@@ -1345,6 +1382,33 @@ def _active_artifact_path(
     else:
         _validate_active_identity(project_root, run_dir, mapping, key, candidate, validator)
     return candidate
+
+
+def active_verification_status(
+    project_root: Path, run_dir: Path, state_data: dict[str, Any]
+) -> tuple[str | None, list[Diagnostic]]:
+    """Read the verdict from the active report after checking its identity."""
+    validator = Validator()
+    entry = state_data["active_artifacts"].get("verification_report")
+    if entry is None:
+        validator.error("ACTIVE_ARTIFACT", "$.active_artifacts.verification_report",
+                        "a registered verification report is required for a terminal verdict")
+        return None, validator.diagnostics
+    path = _active_artifact_path(project_root, run_dir, entry, "verification_report", validator)
+    if path is None or validator.diagnostics:
+        return None, validator.diagnostics
+    try:
+        payload = path.read_bytes()
+        text = payload.decode("utf-8")
+    except (OSError, UnicodeError) as exc:
+        validator.error("ARTIFACT_READ", str(path), str(exc))
+        return None, validator.diagnostics
+    recorded_hash = entry.get("content_sha256")
+    if recorded_hash is not None and sha256_bytes(payload) != recorded_hash:
+        validator.error("ACTIVE_ARTIFACT_HASH", str(path), "verification report bytes differ from their registered identity")
+        return None, validator.diagnostics
+    assessment, _, diagnostics = parse_verification_results(text)
+    return VERIFICATION_STAGE_STATUSES[assessment] if assessment else None, diagnostics
 
 
 def _bound_candidate_path(
@@ -1552,7 +1616,12 @@ def validate_stage_artifact_readiness(
     }.get(stage_id)
     if artifact_key is None:
         return []
-    path = _active_artifact_path(project_root, run_dir, artifacts.get(artifact_key), artifact_key, validator)
+    entry = artifacts.get(artifact_key)
+    if entry is None:
+        validator.error("ACTIVE_ARTIFACT", f"$.active_artifacts.{artifact_key}",
+                        f"an active {artifact_key} is required to pass {stage_id}")
+        return validator.diagnostics
+    path = _active_artifact_path(project_root, run_dir, entry, artifact_key, validator)
     if path is None or not path.is_file():
         return validator.diagnostics
     try:
@@ -1742,6 +1811,8 @@ def validate_run_directory(
                         continue
                     headings = PROBLEM_FRAME_HEADINGS if key == "problem_frame" else VERIFICATION_HEADINGS
                     validator.diagnostics.extend(validate_markdown_headings(text, headings, str(path)))
+                    if key == "problem_frame":
+                        validator.diagnostics.extend(validate_frame_declaration(text, str(path)))
                     metadata = markdown_metadata(text)
                     if isinstance(entry, dict):
                         if is_controlled_run_state(state_data) and state_data["control"].get("intent_realization") == CONTROL_REVISION and metadata.get("semantic_owner") != entry.get("semantic_owner"):

@@ -13,6 +13,7 @@ import yaml
 
 from pipeline_control.artifacts import finalize_semantic_return
 from pipeline_control.boundary import start_role_boundary
+from pipeline_control.cli import main
 from pipeline_control.io_utils import InputError, atomic_write_json, sha256_file
 from pipeline_control.rounds import assert_current_subject, validate_round_context, validate_round_metadata
 from pipeline_control.state import update_bounce_back, update_state
@@ -27,10 +28,19 @@ def load(run: Path) -> dict:
     return json.loads((run / "30_execution/run_state.json").read_bytes())
 
 
-def transition(root: Path, run: Path, stage: str, status: str = "IN_PROGRESS", *, refs=None, source=None):
-    return update_state(run, project_root=root, to_stage=stage, stage_status=status, gate_status=status,
+def transition(root: Path, run: Path, stage: str, status: str | None = "IN_PROGRESS", *, refs=None, source=None):
+    mode = {"from_verifier": True} if status is None else {"stage_status": status, "gate_status": status}
+    return update_state(run, project_root=root, to_stage=stage, **mode,
                         evidence_refs=refs or ["fixture"], failure_ref=source,
                         rationale="Retained fixture evidence.", next_action="Continue the declared lifecycle.", timestamp=FINALIZED_AT)
+
+
+def _verification_cli(root: Path, run: Path, *options: str, stage: str = "verification") -> int:
+    return main([
+        "--project-root", str(root), "--format", "json", "update-state", "--run-dir", str(run),
+        "--to-stage", stage, "--evidence-ref", "fixture", "--rationale", "Retained fixture evidence.",
+        "--next-action", "Continue the declared lifecycle.", "--timestamp", FINALIZED_AT, *options,
+    ])
 
 
 def subject(root: Path, run: Path, value: str = "initial") -> None:
@@ -62,7 +72,11 @@ def report(root: Path, run: Path, status: str = "FAILED") -> None:
     body = _verification_report().replace("- Version: `1`", f"- Version: `{version}`")
     contract = yaml.safe_load((run / "20_contract/product_contract.yaml").read_text(encoding="utf-8"))
     body = body.replace("REQ-001", contract["requirements"][0]["id"]).replace("ACC-001", contract["acceptance_methods"][0]["id"])
-    if status != "PASSED":
+    if status == "FAILED":
+        body = body.replace("READY — All applicable requirements pass.", "NOT_READY — The candidate failed a requirement.")
+        body = body.replace("| PASS | Stable captured output. |", "| FAIL | Observed output differs from expected. |")
+        body = body.replace("- Overall assessment: `READY`", "- Overall assessment: `NOT_READY`")
+    elif status == "BLOCKED":
         body = body.replace("READY", "UNVERIFIED").replace("| PASS |", "| UNVERIFIED |")
         body = body.replace("## Missing or Unusable Evidence\n\nNone.", "## Missing or Unusable Evidence\n\nNo harness was supplied; deterministic fixture only.")
     path = root / started.data["submission_path"]
@@ -73,16 +87,25 @@ def report(root: Path, run: Path, status: str = "FAILED") -> None:
     assert result.ok, result.as_dict()
 
 
-def initial_result(root: Path, *, status: str = "FAILED", candidate: bool = True, record_terminal: bool = True) -> Path:
+def at_verification(root: Path, *, candidate: bool = True) -> Path:
     run = _selected(root)
     assert _call(root, run, _submission(root, run, "brief")).ok
     assert _call(root, run, _contract_submission(root, run)).ok
-    for stage in ("framing", "contract", "repository_analysis", "implementation"):
+    for stage in ("framing", "contract", "repository_analysis"):
         result = transition(root, run, stage, "PASSED")
         assert result.ok, result.as_dict()
+    assert transition(root, run, "implementation").ok
+    tests = run_test_plan(root, run, _write_test_plan(root), attempt_id="initial")
+    assert tests.ok, tests.as_dict()
+    assert transition(root, run, "implementation", "PASSED").ok
     assert transition(root, run, "verification").ok
     if candidate:
         subject(root, run)
+    return run
+
+
+def initial_result(root: Path, *, status: str = "FAILED", candidate: bool = True, record_terminal: bool = True) -> Path:
+    run = at_verification(root, candidate=candidate)
     report(root, run, status)
     if record_terminal:
         result = transition(root, run, "verification", status)
@@ -150,6 +173,91 @@ def test_first_result_uses_audited_inputs_without_counting(tmp_path, status):
     assert (run / "30_execution/run_state.json").read_bytes() == before
 
 
+@pytest.mark.parametrize("status", ["PASSED", "FAILED", "BLOCKED"])
+def test_verifier_cli_records_and_replays_report_derived_status(tmp_path, capsys, status):
+    run = initial_result(tmp_path, status=status, record_terminal=False)
+    state_path = run / "30_execution/run_state.json"
+    registrations = load(run)["control"]["semantic_registrations"]
+
+    assert _verification_cli(tmp_path, run, "--from-verifier") == 0
+    result = json.loads(capsys.readouterr().out)
+    assert result["data"]["stage_status"] == result["data"]["gate_status"] == status
+    state = load(run)
+    assert next(stage for stage in state["stages"] if stage["id"] == "verification")["status"] == status
+    assert next(gate for gate in state["gates"] if gate["id"] == "GATE-VERIFICATION")["status"] == status
+    assert state["repair"]["active_attempt"] == 0
+    assert state["repair"]["rounds"] == []
+    assert state["control"]["semantic_registrations"] == registrations
+    before = state_path.read_bytes()
+
+    assert _verification_cli(tmp_path, run, "--from-verifier") == 0
+    replay = json.loads(capsys.readouterr().out)
+    assert replay["data"]["replayed"] is True
+    assert replay["data"]["verification_result"] == state["control"]["latest_verification_result"]
+    assert state_path.read_bytes() == before
+
+
+@pytest.mark.parametrize("cli", [False, True], ids=["python", "cli"])
+@pytest.mark.parametrize(("reported", "requested"), [("FAILED", "BLOCKED"), ("BLOCKED", "FAILED")])
+def test_explicit_verification_result_cannot_contradict_report(tmp_path, capsys, cli, reported, requested):
+    run = initial_result(tmp_path, status=reported, record_terminal=False)
+    state_path = run / "30_execution/run_state.json"
+    before = state_path.read_bytes()
+    if cli:
+        assert _verification_cli(tmp_path, run, "--stage-status", requested, "--gate-status", requested) == 1
+        assert "VERIFICATION_VERDICT" in {item["code"] for item in json.loads(capsys.readouterr().out)["diagnostics"]}
+    else:
+        result = transition(tmp_path, run, "verification", requested)
+        assert not result.ok and "VERIFICATION_VERDICT" in {item.code for item in result.diagnostics}, result.as_dict()
+    assert state_path.read_bytes() == before
+
+
+@pytest.mark.parametrize(
+    ("defect", "code"),
+    [("unregistered", "ACTIVE_ARTIFACT"), ("removed", "ARTIFACT_MISSING"), ("changed", "ACTIVE_ARTIFACT_HASH")],
+)
+def test_report_derived_terminal_requires_current_registered_report(tmp_path, defect, code):
+    run = at_verification(tmp_path)
+    if defect != "unregistered":
+        report(tmp_path, run, "BLOCKED")
+        path = run / "40_verification/verification_report.md"
+        if defect == "removed":
+            path.unlink()
+        else:
+            path.write_bytes(path.read_bytes() + b"Report changed after registration.\n")
+    state_path = run / "30_execution/run_state.json"
+    before = state_path.read_bytes()
+    result = transition(tmp_path, run, "verification", None)
+    assert not result.ok and code in {item.code for item in result.diagnostics}, result.as_dict()
+    assert state_path.read_bytes() == before
+
+
+def test_verifier_transition_mode_rejects_conflicting_arguments(tmp_path, capsys):
+    run = initial_result(tmp_path, status="BLOCKED", record_terminal=False)
+    state_path = run / "30_execution/run_state.json"
+    before = state_path.read_bytes()
+
+    with pytest.raises(SystemExit) as exc:
+        _verification_cli(tmp_path, run, "--from-verifier", "--stage-status", "BLOCKED")
+    assert exc.value.code == 2
+    capsys.readouterr()
+    for stage, options in (
+        ("verification", ("--from-verifier", "--gate-status", "BLOCKED")),
+        ("release", ("--from-verifier",)),
+    ):
+        assert _verification_cli(tmp_path, run, *options, stage=stage) == 1
+        diagnostics = json.loads(capsys.readouterr().out)["diagnostics"]
+        assert "VERIFIER_MODE" in {item["code"] for item in diagnostics}
+
+    result = update_state(
+        run, project_root=tmp_path, to_stage="verification", from_verifier=True,
+        stage_status="BLOCKED", gate_status="BLOCKED", evidence_refs=["fixture"],
+        rationale="Retained fixture evidence.", next_action="Continue the declared lifecycle.",
+    )
+    assert not result.ok and "VERIFIER_MODE" in {item.code for item in result.diagnostics}, result.as_dict()
+    assert state_path.read_bytes() == before
+
+
 def test_multiple_requests_resume_contract_revisit_and_fresh_result_are_one_round(tmp_path):
     run = initial_result(tmp_path)
     events = [request_change(tmp_path, run), request_change(tmp_path, run, classification="CONTRACT_CONTRADICTION")]
@@ -173,10 +281,13 @@ def test_multiple_requests_resume_contract_revisit_and_fresh_result_are_one_roun
     assert transition(tmp_path, run, "repair", "PASSED").ok
     assert transition(tmp_path, run, "verification").ok
     report(tmp_path, run)
-    assert transition(tmp_path, run, "verification", "FAILED").ok
+    assert transition(tmp_path, run, "verification", None).ok
     state = load(run)
     assert state["repair"]["active_attempt"] == 1
     assert state["repair"]["rounds"][0]["status"] == "COMPLETED"
+    before = (run / "30_execution/run_state.json").read_bytes()
+    assert transition(tmp_path, run, "verification", None).data["replayed"]
+    assert (run / "30_execution/run_state.json").read_bytes() == before
     assert validate_run_directory(tmp_path, run).ok
 
 
@@ -241,7 +352,7 @@ def test_evidence_recovery_preserves_completed_round_and_unknown_subject_rejects
     data = json.loads(manifest.read_bytes())
     data["note"] = "Evidence reconstructed without subject change."
     atomic_write_json(manifest, data)
-    report(tmp_path, run)
+    report(tmp_path, run, "BLOCKED")
     result = transition(tmp_path, run, "verification", "BLOCKED")
     assert result.ok, result.as_dict()
     state = load(run)
@@ -252,7 +363,7 @@ def test_evidence_recovery_preserves_completed_round_and_unknown_subject_rejects
 
 
 def test_missing_initial_candidate_cannot_claim_null_subject_equality(tmp_path):
-    run = initial_result(tmp_path, candidate=False)
+    run = initial_result(tmp_path, status="BLOCKED", candidate=False)
     event = request_change(tmp_path, run, classification="EVIDENCE_GAP")
     resolve(tmp_path, run, event, basis="EVIDENCE_CHANGED")
     before = (run / "30_execution/run_state.json").read_bytes()
@@ -292,7 +403,8 @@ def test_incomplete_release_enters_counted_repair_and_completed_release_is_immut
     assert (run / "30_execution/run_state.json").read_bytes() == before
 
 
-def test_pre_round_report_cannot_complete_reserved_round(tmp_path):
+@pytest.mark.parametrize("status", ["FAILED", None], ids=["explicit", "report-derived"])
+def test_pre_round_report_cannot_complete_reserved_round(tmp_path, status):
     run = initial_result(tmp_path)
     recovery = request_change(tmp_path, run, classification="EVIDENCE_GAP")
     resolve(tmp_path, run, recovery, basis="EVIDENCE_CHANGED")
@@ -306,7 +418,7 @@ def test_pre_round_report_cannot_complete_reserved_round(tmp_path):
     assert transition(tmp_path, run, "repair", "PASSED").ok
     assert transition(tmp_path, run, "verification").ok
     before = (run / "30_execution/run_state.json").read_bytes()
-    result = transition(tmp_path, run, "verification", "FAILED")
+    result = transition(tmp_path, run, "verification", status)
     assert not result.ok and any(d.code == "ROUND_RESULT" for d in result.diagnostics)
     assert (run / "30_execution/run_state.json").read_bytes() == before
 
@@ -345,8 +457,8 @@ def test_known_subject_drift_before_reservation_rejects_atomically(tmp_path, dri
     assert (run / "30_execution/run_state.json").read_bytes() == before
 
 
-def test_incomplete_failed_subject_can_reserve_round_before_building_candidate(tmp_path):
-    run = initial_result(tmp_path, candidate=False)
+def test_incomplete_subject_can_reserve_round_before_building_candidate(tmp_path):
+    run = initial_result(tmp_path, status="BLOCKED", candidate=False)
     event = request_change(tmp_path, run)
     result = transition(tmp_path, run, "repair", refs=[event], source="verification-report@1")
     assert result.ok, result.as_dict()
@@ -357,7 +469,7 @@ def test_incomplete_failed_subject_can_reserve_round_before_building_candidate(t
 def test_failed_inconsistent_candidate_can_reserve_counted_repair(tmp_path, defect):
     # Establish the defect before the report invocation so recorded hashes name
     # the actual failed candidate, rather than hiding post-verification drift.
-    run = initial_result(tmp_path, candidate=False, record_terminal=False)
+    run = initial_result(tmp_path, status="BLOCKED", candidate=False, record_terminal=False)
     subject(tmp_path, run)
     if defect == "invalid_zip":
         archive = tmp_path / "deliverables/fixture.zip"

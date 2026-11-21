@@ -15,6 +15,7 @@ htmlcov/
 !/tools/intent-tool-pipeline/workspace/build_runs/README.md
 /tools/intent-tool-pipeline/workspace/framework_development/*
 !/tools/intent-tool-pipeline/workspace/framework_development/README.md
+!/tools/intent-tool-pipeline/workspace/framework_development/verification-and-package-plan.md
 /tools/intent-tool-pipeline/intent_deliver/*
 !/tools/intent-tool-pipeline/intent_deliver/README.md
 /tools/intent-tool-pipeline/demo_workspace/*

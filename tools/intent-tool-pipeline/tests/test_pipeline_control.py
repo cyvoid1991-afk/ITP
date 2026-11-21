@@ -18,7 +18,13 @@ from pipeline_control.packaging import create_package, inspect_package
 from pipeline_control.result import CommandResult
 from pipeline_control.state import update_bounce_back, update_state
 from pipeline_control.test_runner import run_test_plan
-from pipeline_control.validation import validate_contract_file, validate_run_directory, validate_run_state_data
+from pipeline_control.validation import (
+    parse_problem_frame_readiness,
+    parse_verification_results,
+    validate_contract_file,
+    validate_run_directory,
+    validate_run_state_data,
+)
 
 
 TIMESTAMP = "2026-08-15T12:00:00+09:00"
@@ -189,6 +195,72 @@ def _verification_report() -> str:
         ("Root Return", "- Overall assessment: `READY`"),
     ]
     return "# Verification Report\n\n" + "\n\n".join(f"## {heading}\n\n{body}" for heading, body in headings) + "\n"
+
+
+@pytest.mark.parametrize(
+    ("declaration", "expected"),
+    [
+        ("PASS", "PASS"),
+        ("`PASS` — A prior condition was BLOCKED.", "PASS"),
+        ("PASS_WITH_ASSUMPTIONS — PASS remains possible after review.", "PASS_WITH_ASSUMPTIONS"),
+        ("`BLOCKED` — A PASS decision requires further evidence.", "BLOCKED"),
+    ],
+)
+def test_problem_frame_readiness_preserves_status_and_allows_rationale_mentions(
+    declaration: str, expected: str,
+) -> None:
+    text = f"## Completion Status\n\n{declaration}\n\nPASS is appropriate when readiness is established.\n"
+    assert parse_problem_frame_readiness(text) == expected
+
+
+@pytest.mark.parametrize(
+    "assessment",
+    [
+        "READY — Evidence is complete.\n\n`NOT_READY` — A review is missing.",
+        "READY — `NOT_READY` — A review is missing.",
+        "`UNVERIFIED` — A review is missing.\n\nUNVERIFIED",
+        "READY\n\n## Overall Assessment\n\nNOT_READY",
+    ],
+    ids=["contradictory", "same-line", "duplicate", "duplicate-section"],
+)
+def test_verification_rejects_multiple_overall_declarations(assessment: str) -> None:
+    report = _verification_report().replace("READY — All applicable requirements pass.", assessment)
+    overall, _, diagnostics = parse_verification_results(report)
+    assert overall is None
+    assert {item.code for item in diagnostics} == {"VERIFICATION_OVERALL"}
+
+
+@pytest.mark.parametrize("status_header", ["Status", "Result"])
+def test_verification_uses_only_the_declared_status_column(status_header: str) -> None:
+    text = (
+        "## Overall Assessment\n\n`NOT_READY` — The report was previously READY.\n\n"
+        "READY requires the missing evidence.\n\n"
+        "## Requirement Results\n\n"
+        f"| Requirement | Acceptance | Evidence | {status_header} | Finding |\n"
+        "| --- | --- | --- | --- | --- |\n"
+        r"| `REQ-001` | ACC-001 \| ACC-002 | PASS | `FAIL` | UNVERIFIED |" "\n"
+    )
+    overall, results, diagnostics = parse_verification_results(text)
+    assert not diagnostics
+    assert overall == "NOT_READY"
+    assert results == {"REQ-001": "FAIL"}
+
+
+@pytest.mark.parametrize(
+    "columns", ["Status | Result", "Status | Status", "Outcome | Evidence"],
+    ids=["dual-alias", "duplicate-status", "missing-status"],
+)
+def test_verification_rejects_missing_or_ambiguous_status_columns(columns: str) -> None:
+    text = (
+        "## Overall Assessment\n\nREADY\n\n"
+        "## Requirement Results\n\n"
+        f"| Requirement | {columns} |\n"
+        "| --- | --- | --- |\n"
+        "| REQ-001 | PASS | PASS |\n"
+    )
+    _, results, diagnostics = parse_verification_results(text)
+    assert "REQ-001" not in results
+    assert {item.code for item in diagnostics} == {"VERIFICATION_RESULT"}
 
 
 def _state(current_stage: str = "release", current_status: str = "PASSED") -> dict:
@@ -889,6 +961,7 @@ def test_release_is_blocked_when_active_verification_hash_changes_after_validati
         for stage in state["stages"]
     ]
     state_path.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
+    assert run_test_plan(tmp_path, run, _write_test_plan(tmp_path)).ok
     verified = update_state(
         run,
         project_root=tmp_path,
@@ -904,8 +977,6 @@ def test_release_is_blocked_when_active_verification_hash_changes_after_validati
     captured = json.loads(state_path.read_text(encoding="utf-8"))["control"]["verification_validation_identity"]
     assert captured["content_sha256"] == report_persist.data["content_sha256"]
 
-    plan = _write_test_plan(tmp_path)
-    assert run_test_plan(tmp_path, run, plan).ok
     report_path = run / "40_verification" / "verification_report.md"
     report_path.write_bytes(report_path.read_bytes() + b"\nchanged after validation\n")
     before = state_path.read_bytes()

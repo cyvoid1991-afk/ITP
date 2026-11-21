@@ -331,6 +331,8 @@ Required sections:
 - Validation Needs
 - Handoff Readiness
 
+In Completion Status, put exactly one declaration on the first nonempty line. Use PASS, PASS_WITH_ASSUMPTIONS, or BLOCKED, optionally wrapped in backticks. A rationale may follow an em dash, en dash, spaced hyphen, or colon and a space, or appear in the following prose. Declare the status once in a single section.
+
 Structural presence does not establish semantic sufficiency. The readiness result must agree with the recorded assumptions and blockers.
 
 A revision frame is a complete current frame, not a delta note. It preserves exact baseline behavior where unchanged and explicitly consolidates requested changes, non-change claims, affected interfaces, migration impact, adjacent regression scope, and the evidence needed for all applicable requirements.
@@ -463,6 +465,8 @@ Required sections:
 - Risks, Waivers, and Blockers
 - Revalidation Needs
 - Root Return
+
+Overall Assessment follows the same declaration syntax with READY, NOT_READY, or UNVERIFIED. In Requirement Results, use one table with the requirement ID first and exactly one Status column (the historical Result header is also supported). Put the verdict in that column. Escape literal pipes inside cells.
 
 Every contractually applicable requirement receives `PASS`, `FAIL`, or `UNVERIFIED` with evidence. Requirements flagged for LLM judgment must cite the applied judgment criteria. The inputs section identifies the exact contract, manifest, passing inspection, archive SHA-256, verifier-harness attempt and cleanup evidence, and any additional probes. A harness PASS is not semantic judgment. A polished summary cannot substitute for requirement-level results.
 

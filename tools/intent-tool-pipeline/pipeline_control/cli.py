@@ -10,7 +10,7 @@ from typing import Sequence
 from .artifacts import SEMANTIC_ARTIFACTS, finalize_semantic_return, persist_semantic_artifact
 from .boundary import ROLE_POLICIES, finish_role_boundary, start_role_boundary
 from .io_utils import InputError, read_structured, resolve_within
-from .packaging import create_package, inspect_package
+from .packaging import create_and_inspect_package, create_package, inspect_package
 from .result import CommandResult
 from .state import update_bounce_back, update_state
 from .test_runner import run_test_plan
@@ -51,8 +51,13 @@ def build_parser() -> argparse.ArgumentParser:
     state = subparsers.add_parser("update-state", help="Validate and atomically apply one allowed state transition.")
     state.add_argument("--run-dir", required=True, help="Run directory containing 30_execution/run_state.json.")
     state.add_argument("--to-stage", required=True, choices=STAGE_IDS, help="Target pipeline stage.")
-    state.add_argument("--stage-status", required=True, choices=sorted(STAGE_STATUSES), help="Target stage status.")
-    state.add_argument("--gate-status", required=True, choices=sorted(STAGE_STATUSES), help="Target gate status.")
+    status_mode = state.add_mutually_exclusive_group(required=True)
+    status_mode.add_argument("--stage-status", choices=sorted(STAGE_STATUSES),
+                             help="Explicit target stage status. Requires --gate-status.")
+    status_mode.add_argument("--from-verifier", action="store_true",
+                             help="Derive both terminal verification statuses from the active verifier report.")
+    state.add_argument("--gate-status", choices=sorted(STAGE_STATUSES),
+                       help="Target gate status in explicit mode. Omit with --from-verifier.")
     state.add_argument("--evidence-ref", action="append", default=[], help="Gate evidence reference; repeat as needed.")
     state.add_argument("--rationale", required=True, help="Recorded gate rationale.")
     state.add_argument("--next-action", required=True, help="Next allowed action recorded in run state.")
@@ -124,6 +129,7 @@ def build_parser() -> argparse.ArgumentParser:
     package = subparsers.add_parser("package", help="Create a deterministic ZIP and SHA-256 release manifest.")
     package.add_argument("--run-dir", required=True, help="Run directory with passing test results.")
     package.add_argument("--spec", required=True, help="JSON/YAML package specification.")
+    package.add_argument("--inspect", action="store_true", help="Inspect the new archive using its generated manifest.")
 
     inspect = subparsers.add_parser("inspect-package", help="Compare an archive with its manifest and release policy.")
     inspect.add_argument("--run-dir", required=True, help="Run directory receiving package_inspection.json.")
@@ -177,6 +183,7 @@ def _run(args: argparse.Namespace) -> CommandResult:
                 _path(project_root, args.run_dir),
                 project_root=project_root,
                 to_stage=args.to_stage,
+                from_verifier=args.from_verifier,
                 stage_status=args.stage_status,
                 gate_status=args.gate_status,
                 evidence_refs=args.evidence_ref,
@@ -245,10 +252,11 @@ def _run(args: argparse.Namespace) -> CommandResult:
                 attempt_id=args.attempt_id,
             )
         if args.command == "package":
-            return create_package(
+            package_operation = create_and_inspect_package if args.inspect else create_package
+            return package_operation(
                 project_root,
                 _path(project_root, args.run_dir),
-                _path(project_root, args.spec, must_exist=True),
+                _path(project_root, args.spec, must_exist=not args.inspect),
             )
         if args.command == "inspect-package":
             return inspect_package(

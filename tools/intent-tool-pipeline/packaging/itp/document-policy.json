@@ -210,6 +210,12 @@
       "target": "tools/intent-tool-pipeline/workspace/framework_development/agent-artifact-revision-plan.md",
       "reason": "Historical framework development record retained only in the source repository; not a runtime dependency or bundled evidence.",
       "kind": "source-only"
+    },
+    {
+      "source": "tools/intent-tool-pipeline/workspace/framework_development/README.md",
+      "target": "tools/intent-tool-pipeline/workspace/framework_development/verification-and-package-plan.md",
+      "reason": "The approved revision plan is retained in the source repository as a framework development record.",
+      "kind": "source-only"
     }
   ]
 }

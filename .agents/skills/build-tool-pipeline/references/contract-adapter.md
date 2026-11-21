@@ -28,7 +28,7 @@ Execution contract:
 
 - Accepted primary inputs: the active `build_request.yaml`, original intent/delegation source snapshots and, on the prepared path, the adopted `problem_frame.md` explicitly named by the parent for one `workspace/build_runs/<pilot_id>/` run. The latter is the intent realization brief for marked runs. Direct B uses `handoff.next_stage: contract` and has no frame. Read original authorized sources to independently test consequential claims; do not rely only on Root's or Realizer's summary.
 - Consumed identity: for a SHA-256-bound request, list `build-request` version/content_sha256 in source_artifacts and the active `problem-frame` version/content_sha256 only when prepared. Use the actual supplied identities, never placeholders or fabricated provenance.
-- Return boundary: keep contract corrections and source-supported decisions in B. Return missing technical evidence to Root; return an unsupported material intent/preference/authority/loss choice with its affected scope and consequences. Do not restart all intent work or silently create a user decision. Compare individual and cumulative differences against original intent, not only the previous Root choice.
+- Return boundary — correct omissions or misformalized obligations in the contract when supplied evidence settles them. Send outstanding questions and evidence needs to Root with the sources checked, affected scope, exact unresolved point, consequential differences between plausible answers, and a recommendation when supported. Compare individual and cumulative differences against original intent and prior decisions.
 - Approved baseline input: for a `REVISION` request, use only the exact resolved verified baseline explicitly named by the parent, including its run, release-archive, product-contract, and verification-report references and SHA-256 identities. Treat those identities and the prior `product_contract.yaml` as immutable baseline context, not as proof that the active run is accepted.
 - Required output: one complete product_contract.yaml body conforming to artifact contract 1.0. Under selected control.semantic_role_boundary: "1.1", write it at the exact role-boundary start submission_path, with the assigned version and existing canonical-path metadata. Otherwise return the complete body to Root.
 - Registration/activation owner: Root Codex. Selected file authorship does not authorize canonical persistence or a gate decision.
@@ -46,7 +46,9 @@ Execution contract:
 
 For selected "1.1", return a compact Root message with the actual assigned path,
 artifact ID/version, final content SHA-256, invocation, readiness, inputs read,
-assumptions/blockers and evidence references. Do not include the complete body for
+assumptions/blockers and evidence references. Keep question details in the
+existing contract decisions or blockers and cite them in the compact return.
+Do not include the complete body for
 Root to copy or claim that the canonical contract was activated. Root registers
 those exact bytes with --expected-source-sha256 and reads the registered contract
 before implementing it. A BLOCKED contract stays BLOCKED; failed admission does
@@ -70,11 +72,13 @@ authority; it cannot create it. Read the governing v0.3 instruction/procedure
 sections supplied by Root, without taking on Root's orchestration role.
 
 Check both the current change against the last valid basis and the cumulative
-result against original intent plus explicit user decisions. Missing technical
-evidence, delegated trade-offs and contract corrections stay in B. Only a material
-intent, preference, authority or acceptable-loss choice unsupported by existing
-sources returns to A/user through Root, with affected scope, evidence, options
-and the exact decision. Preserve independent stable work; do not restart all of A.
+result against original intent plus explicit user decisions. Root resolves
+outstanding questions first using original intent, prior decisions,
+implementation context and existing delegation. Root brings any remaining
+material user-reserved choice to the user. Incorporate the answer into the
+contract, cite the decision or evidence in its existing records, and reassess
+readiness. Preserve independent work and limit any return to A to the affected
+issue.
 
 For newly identity-bound build requests, `source_artifacts` must identify the
 active `build-request` version and `content_sha256`; include the active

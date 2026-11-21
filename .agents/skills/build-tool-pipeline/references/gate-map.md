@@ -371,16 +371,13 @@ Pass the repository gate with read-only analysis evidence, then enter implementa
 
 Require `ok: true` and `data.status: PASS`. Retain `data.attempt_path` and `data.attempt_sha256`; attempt IDs are immutable and cannot be reused. The fixed canonical result must identify those immutable attempt bytes. Pass implementation with product paths and `30_execution/test_results.json` as evidence, but keep `implementation` as the current stage while candidate packaging and inspection run. Enter verification as `IN_PROGRESS` only after the inspected candidate and harness evidence exist; `IN_PROGRESS` is the normal report-registration window and may initially have a null active verification report.
 
-Run `package`, then `inspect-package`, using the fixed default release-manifest and package-inspection paths. Require both commands to return `ok: true` and the inspection to return `data.status: PASS`. These files and the archive are pre-verification candidate evidence; their existence does not move release from `PENDING` or authorize user-facing release claims.
+The implementation gate checks the canonical passing test results both at implementation PASS and on advancement from implementation into verification. Run `package --inspect` using the fixed default release-manifest and package-inspection paths. Require `ok: true` and `data.inspection_status: PASS`. On failure, inspect the step diagnostic. After an interruption following creation, use standalone `inspect-package` on the same manifest and candidate, or rebuild after correcting its contents. These files and the archive are pre-verification candidate evidence; their existence does not move release from `PENDING` or authorize user-facing release claims.
 
 ```powershell
 ..\..\.venv\Scripts\python.exe pipeline_ops.py --format json package `
   --run-dir <run-dir> `
-  --spec <package-spec-path>
-
-..\..\.venv\Scripts\python.exe pipeline_ops.py --format json inspect-package `
-  --run-dir <run-dir> `
-  --manifest <run-dir>/50_release/release_manifest.json
+  --spec <package-spec-path> `
+  --inspect
 
 ..\..\.venv\Scripts\python.exe pipeline_ops.py --format json prepare-verification `
   --run-dir <run-dir> `
@@ -414,7 +411,18 @@ After implementation, candidate packaging, package inspection, and `prepare-veri
 
 Then start the `independent_verifier` boundary and invoke `independent_verifier` as the exact custom role. Supply the immutable harness attempt and cleanup evidence, source identity, release manifest, archive hash, package inspection, contract, tests, documentation, and repair history. Legacy verification permits focused probes under `40_verification/probes/**`; selected verification permits them only in its assigned `40_verification/probes/<audit-id>/` directory. These supplement but never replace full applicable-requirement coverage. Selected invocation/finalization must also supply the artifact assignment and expected digest from the selected recipe above. Finalize the complete report with `finalize-semantic-return --artifact verification_report --role independent_verifier`, require PASS, and run `validate-run` while verification remains `IN_PROGRESS`.
 
-Only after that validation passes, set the in-progress stage to the report-derived verification status: for `READY` with every applicable requirement `PASS`, mark verification `PASSED`; for `NOT_READY`, mark verification `FAILED`; for `UNVERIFIED`, mark verification `BLOCKED` and acquire evidence without consuming a repair attempt unless implementation or contract changes become necessary.
+After validation, record the registered verifier verdict with the following command.
+
+```powershell
+..\..\.venv\Scripts\python.exe pipeline_ops.py --format json update-state `
+  --run-dir <run-dir> `
+  --to-stage verification --from-verifier `
+  --evidence-ref <active-report-ref> `
+  --rationale "<basis from registered report>" `
+  --next-action "<follow-up based on verdict>"
+```
+
+The control plane derives both stage and gate status from the active report: for `READY` with every applicable requirement `PASS`, mark verification `PASSED`; for `NOT_READY`, mark verification `FAILED`; for `UNVERIFIED`, mark verification `BLOCKED` and acquire evidence without consuming a repair attempt unless implementation or contract changes become necessary.
 
 Verification `IN_PROGRESS` may await report registration. Never create a terminal verification `PASSED`, `FAILED`, or `BLOCKED` state while `active_artifacts.verification_report` is null or points to a missing file.
 
