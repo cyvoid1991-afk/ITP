@@ -1,5 +1,18 @@
 # ITP public seed history
 
+## 2026-11-26 - ITP-20261126-CLAUDE-WINDOWS - Refresh the Windows transfer package
+
+- Publish the [Windows transfer snapshot](deliverables/ITP-4e6a6bd-windows.zip)
+  of `4e6a6bd`, its checksum, and the [installation guide](deliverables/WINDOWS_MIGRATION.md).
+  The ZIP includes a local installer for nine skills and six Claude agents,
+  using Windows-compatible file copies and destination-selected model settings.
+- The installer preserves tracked procedures, Python runtime, role IDs, and
+  control `1.2` bindings. Existing runs and the historical seed retain their
+  original paths and evidence.
+- Verified ZIP extraction, SHA-256, Git integrity, generated registration
+  and links, both CLI help commands, and ten focused Python tests. Live Claude
+  dispatch and Windows execution remain unverified.
+
 ## 2026-11-21 - ITP-20261121-STAGE-OWNERSHIP - Specialist questions and implementation delegation
 
 - Apply the approved Workflow A/B ownership revisions. Realizer and Contractor
